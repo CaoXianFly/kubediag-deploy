@@ -1,0 +1,8 @@
+---
+# Install k3s 
+- include_tasks: install_k3s.yml
+
+# Copy /etc/rancher/k3s/k3s.yaml to .kube/config
+- include_tasks: copy_config.yml
+
+#TODO: 还需要kubectl get node确定是可以访问api Server的

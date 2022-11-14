@@ -1,0 +1,77 @@
+---
+# block1
+- name: Block of checking config file is exist
+  block: 
+    - name: Checking config file is exist
+      stat:
+        path: "{{ K3s_config }}"
+      register: file_status
+
+    - name: Checking that if the config file exists
+      debug:
+        msg: "{{ K3s_config }} is already exist"
+      when: file_status.stat.exists == True
+      
+    - name: Checking that if the config file not exists
+      fail:
+        msg: "{{ K3s_config }} is not exist"
+      when: file_status.stat.exists == False
+
+# block2
+- name: Block of checking .kube directory and config is exist and create
+  block:  
+    - name: Checking whether ~/.kube directory is exist
+      stat:
+        path: ~/.kube
+      register: kube_dir_status
+    
+    # TODO: if .kube is already exist, remove this older .kube/config file
+    #       does not remove older config here now
+    - name: Checking ~/.kube directory is exist
+      debug:
+        msg: "~/.kube directory is already exist"
+      when: kube_dir_status.stat.exists == True and kube_dir_status.stat.isdir
+
+    # Create the directory if not exist
+    - name: Block of kube directory is not exist
+      block:
+        - name: .kube is not exist
+          debug:
+            msg: "~/.kube is not exist and starting create it now"
+  
+        - name: Creating kube directory
+          file:
+            path: ~/.kube
+            state: directory
+            mode: '0755'
+          
+        - name: Checking kube directory is created successfully
+          stat:
+            path: ~/.kube
+          register: kube_dir_created
+          failed_when: kube_dir_created.stat.exists == False or kube_dir_created.stat.isdir == False
+      when: kube_dir_status.stat.exists == False
+
+# block3: no block wrapper is the same.
+# Copy k3s.yaml to ~/.kube for kubectl tool
+- name: Copying k3s.yaml to ~/.kube and renaming config
+  copy:
+    src: "{{ K3s_config }}"
+    dest: ~/.kube/config
+  
+- name: Checking if config file is copied to ~/.kube
+  stat:
+    path: ~/.kube
+  register: config_copied
+
+- name: fail if copy action is failed
+  fail:
+    msg: "copy config file occur error"
+  when: config_copied.stat.exists == False
+
+- name: copy config file successfully
+  debug:
+    msg: "{{ K3s_config }} is copied to ~/.kube successfully"
+  when: config_copied.stat.exists == True
+
+  

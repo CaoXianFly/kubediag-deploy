@@ -1,0 +1,36 @@
+---
+# Install k3s on control plane(k3s-server host)
+- name: Checking if k3s is installed on k3s-server host
+  command: k3s --version
+  register: k3s_if_installed
+  ignore_errors: true
+
+- name: Printing message 
+  debug: 
+      msg: "K3s has been installed, so it will not be installed again and all task of install K3s left will be skipped"
+  when: "k3s_if_installed.rc == 0"
+
+- name: Block of installing k3s if k3s was not installed and ensuring install success
+  block:
+    # Install at '/usr/local/bin' defaulted
+    # TODO: remove it see at uninstall K3s docs:
+    - name: Installing K3s using script
+      # Mirror may be missing
+      shell: curl -sfL https://rancher-mirror.oss-cn-beijing.aliyuncs.com/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -
+      environment:
+        INSTALL_K3S_VERSION: "{{ K3s_server_version }}"
+    - name: Ensuring K3s is installed successfully
+      command: k3s --version
+      register: ret
+      ignore_errors: true
+    
+    - name: Printing install failed
+      fail: 
+        msg: "Installing K3s:{{ K3s_server_version }} failed using script!"
+      when: "ret.rc != 0"
+
+    - name: Printing install successed
+      debug:
+        msg: "K3s:{{ K3s_server_version }} is installed successfully!"
+      when: "ret.rc == 0"
+  when: "k3s_if_installed.rc != 0"
