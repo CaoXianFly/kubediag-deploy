@@ -1,0 +1,55 @@
+---
+#TODO: 1. Skip it if cert-manager is already installed(cert-manager namspace is exist and phase is Active)
+# - name: Checking cert-manager whether is already installed
+#   command: kubectl get ns
+#   register: get_ns_result
+
+# - name: Cert Manager is already installed
+#   debug:
+#     msg: "cert-manger is already installed and cert-manager namespace is exist, please "
+#   when: get_ns_result.stdout.find('cert-manager') != -1
+
+# 2. Install if cert-manager namespace is not exist or phase is not Active
+- name: Installing Cert Manager on k3s server
+  command: kubectl apply --validate=false -f {{ cert_manager_download_url }}
+  register: install_ret
+  ignore_errors: true
+
+- name: Printing error message if cert-manager installed failed
+  fail:
+    msg: "cert manager installation failed "
+  when: install_ret.rc != 0
+
+- name: cert-manager installed success on k3s server
+  block:
+    - name: cert manager install success
+      debug: 
+        msg: "cert manager is installed successfully"
+
+    - name: Checking cert manager is running status
+      command: kubectl get ns {{ cert_manager_ns }} -o json
+      register: get_result
+      ignore_errors: true
+    
+    - name: Cert manager is installed failed or cert-manager namespace is not exist
+      fail:
+        msg: "Cert manager is installed failed or cert-manager namespace is not exist"
+      when: get_result.rc != 0
+
+    - name: Checking cert-manager namespace phase is Active status
+      debug: 
+        # msg: "{{get_result.stdout|from_json|json_query('status.phase')}}"
+        msg: "cert-manager is installed successfully and cert-manager namespace is in Active phase"
+      when: get_result.stdout|from_json|json_query('status.phase') == "Active"
+
+    - name: Getting three pods of cert-managers
+      command: kubectl get pod -n {{ cert_manager_ns }} -o json
+      register: pods_describe_info
+
+    - name: Waiting all pods of cert-manager namespace arrive reach to running status
+      debug: 
+        msg: "All pods of cert-manager namespace are running"
+      until: pods_describe_info.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+  
+  when: install_ret.rc == 0
+        

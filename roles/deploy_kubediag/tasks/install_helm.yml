@@ -1,0 +1,64 @@
+---
+# 1. Check if helm is already installed 
+- name: checking if helm is already installed
+  command: helm help
+  register: helm_is_exist
+  ignore_errors: true
+
+- name: Printing Helm version if helm is already exist
+  debug:
+    msg: "helm is already exist"
+  when: helm_is_exist.rc == 0
+
+# 2. Install helm if it not exist
+- name: Block of installing helm
+  block:
+    - name: Downloading helm{{ helm_version }} release package
+      uri:
+        url: "{{ helm_download_url }}"
+        dest: "{{ helm_download_dir }}/{{ helm_file_name }}"
+      
+    - name: Unarchive download tar file
+      unarchive:
+        src: "{{helm_download_dir}}/{{helm_file_name}}"
+        remote_src: yes
+        dest: "{{helm_download_dir}}"
+        mode: '0655'
+    
+    - name: Checking Linux64-amd/helm file is exist
+      stat:
+        path: "{{helm_exector_file_dir}}/helm"
+      register: helm_file_exist
+      failed_when: not helm_file_exist.stat.exists
+
+    - name: Creating helm link to {{helm_install_dir}}
+      become: yes
+      copy:
+        remote_src: yes
+        force: yes
+        src: "{{ helm_exector_file_dir }}/helm"
+        dest: "{{ helm_install_dir }}/helm"
+        mode: '0755'
+
+    - name: Deleteing the compressed helm package
+      file:
+        path: "{{ helm_download_dir }}/{{ helm_file_name }}"
+        state: absent
+      ignore_errors: true
+    
+    - name: Deleteing the linux-amd64 directory
+      file:
+        path: "{{ helm_exector_file_dir }}"
+        state: absent
+      ignore_errors: true
+    
+    - name: Ensuring helm install successfully
+      command: helm version
+      register: ret
+    
+    - name: Printing success message
+      debug:
+        msg: "{{ ret.stdout }}"
+      when: ret.rc == 0
+
+  when: helm_is_exist.rc != 0

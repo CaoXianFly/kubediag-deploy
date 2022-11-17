@@ -1,0 +1,24 @@
+---
+- name: Verifying k3s is working normally
+  command: kubectl get node -o json
+  register: contents
+  ignore_errors: true
+
+- name: Exiting playbook because some error
+  fail:
+    msg: "Cannot get node messages"
+  when: "contents.rc != 0"
+
+- name: Block of handle execution of this command returns the correct result
+  block:
+    - name: Checking K3s server is running in Ready status
+      debug:
+        msg: "K3s server is running in Ready status"
+      #TODO: why ["True"] not True
+      # when: contents.stdout|from_json|json_query('items[0].status.conditions[?type==`Ready`].status') == ['True']
+
+    - name: K3s server is not Ready
+      fail:
+        msg: "K3s server is not ready, please check!!!"
+      when: contents.stdout|from_json|json_query('items[0].status.conditions[?type==`Ready`].status') != ['True']
+  when: "contents.rc == 0"

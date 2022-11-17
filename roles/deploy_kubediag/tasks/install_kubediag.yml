@@ -1,0 +1,66 @@
+---
+# 执行如下命令：
+# helm repo add kubediag https://kubediag.github.io/kubediag-helm
+# helm repo update
+# helm install kubediag kubediag/kubediag-helm --create-namespace --namespace kubediag
+
+# 1. 判断kubediag namespace是否已经存在，如果已经存在的话则只会打印debug，否则就进入安装流程；
+# 2. 使用Ansible的helm模块开始执行上述的三条指令；
+# 3. 判断kubediag的Pod状态，是否都是正常的Running状态。
+- name: Getting all namespace information
+  command: kubectl get ns -o json
+  register: ns_info
+
+# Exist and Active status
+- name: Kubediag namespace is already exist and is in Active status
+  debug:
+    msg: "Kubediag namespace is already exist and is in Active status"
+    # msg: "kubediag namespace is already exist"
+  when: ns_info.stdout|from_json|json_query('items[?metadata.name == `kubediag`].status.phase') == ["Active"]
+
+# Not exist
+- name: Printing message that kubediag namespace is starting to install
+  debug:
+    msg: "kubediag namespace is starting to install"
+## Ansible helm module has bug, so it use command here
+## Using helm command is error, instead of kubectl
+# - name: Update helm chart repo
+#   command: helm repo update {{ kubediag_chart_release_name }} 
+#   ignore_errors: true
+
+# - name: Deploy kubediag latest version of kubediag chart inside kubediag namespace(and create it)
+#   command: helm install kubediag kubediag/kubediag-helm --create-namespace --namespace kubediag
+
+- name: Creating kubediag namespace
+  kubernetes.core.k8s:
+    name: "{{ kubediag_namespace }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  
+- name: Deleteing existing kubediag directory
+  file: 
+    path: "{{ kubediag_dir }}"
+    state: absent
+
+- name: Downloading kubediag file
+  command: git clone {{kubediag_download_url}} ~/kubediag
+
+# FIXME: this is error sometime because pull images timeout
+- name: Applying all config/deploy
+  command: kubectl apply -f {{ kubediag_dir }}/config/deploy
+
+  # TODO: waiting for all pods running
+
+- name: Deleteing kubediag directory
+  file:
+    path: "{{ kubediag_dir }}"
+    state: absent
+
+# Exist but not in Active status
+# - name: KubeDiag namespace is exist but phase is not Active
+#   blcok:
+#     - name:
+
+#   when: ns_info.stdout|from_json|json_query('items[?metadata.name == `kubediag`].status.phase') != [] and ns_info.stdout|from_json|json_query('items[?metadata.name == `kubediag`].status.phase') != ["Active"]
+

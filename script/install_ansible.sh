@@ -2,7 +2,7 @@
 if which ansible; then
     ansible -V
     echo "====> { Ansible has been installed }"
-    exit 0
+    # exit 0
 fi
 
 # Install python3 and pip3
@@ -19,6 +19,7 @@ if which python3; then
         elif which yum; then
             yum install python3-pip -y
         else
+            echo "====> { Unknown package manager! }"
         # curl https://bootstrap.pypa.io/pip/3.${PY3_VERSION}/get-pip.py -o get-pip.py
         # python3 get-pip.py
         fi
@@ -90,5 +91,45 @@ if which ansible; then
     echo "====> { Ansible$ANSIBLE_VERSION is installed successfully! }"
 else
     echo "====> { Ansible install failed and exit with -1}"
+    exit -1
+fi
+
+# Install ansible kubernetes module
+# see at https://github.com/ansible-collections/kubernetes.core/issues/159#issuecomment-873920322
+pip install --ignore-installed kubernetes
+
+kubernetes_core_dir=~/kubernetes.core
+if [ $? -eq 0 ]; then
+    # not exist
+    if [ ! -d "$kubernetes_core_dir" ]; then
+        # TODO: Clone fail sometime because of network to github
+        #       We provide a gitee mirror for domestic users
+        echo "===> { kubernetes.core directory is not exist, git cloning but maybe fail because of network... }"
+        # git clone https://github.com/ansible-collections/kubernetes.core.git ~/kubernetes.core
+        git clone https://gitee.com/codercxf/kubernetes.core.git ~/kubernetes.core
+        # if [ $? -ne 0 ]; then
+        #     git clone https://gitee.com/codercxf/kubernetes.core.git ~/kubernetes.core
+        # fi
+        # clone failed finally 
+        if [ ! -d "$kubernetes_core_dir" ]; then
+            echo "$kubernetes_core_dir is not exist" 
+            echo "====> { git clone failed and exit with -1 }"
+            exit -1
+        fi
+    fi
+        mkdir -p ~/.ansible/plugins/modules
+        cp ~/kubernetes.core/plugins/action/k8s.py ~/.ansible/plugins/modules/
+        ansible-galaxy collection install kubernetes.core
+        rm -rf ~/kubernetes.core
+        # rm -rf ~/kubernetes.core
+        if [ $? -eq 0 ]; then
+            echo "====> { Ansible module kubernetes.core installed success }"
+        else
+            echo "====> { Ansible module kubernetes.core install failed and exit -1 }"
+            exit -1
+        fi
+        
+else
+    echo "====> { Ansible module kubernetes.core install failed and exit -1 }"
     exit -1
 fi

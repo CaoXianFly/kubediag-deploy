@@ -2,10 +2,11 @@
 # block1
 - name: Block of checking config file is exist
   block: 
-    - name: Checking config file is exist
+    - name: Checking if config file is exist
       stat:
         path: "{{ K3s_config }}"
       register: file_status
+      ignore_errors: true
 
     - name: Checking that if the config file exists
       debug:
@@ -24,6 +25,7 @@
       stat:
         path: ~/.kube
       register: kube_dir_status
+      ignore_errors: true
     
     # TODO: if .kube is already exist, remove this older .kube/config file
     #       does not remove older config here now
@@ -56,13 +58,18 @@
 # Copy k3s.yaml to ~/.kube for kubectl tool
 - name: Copying k3s.yaml to ~/.kube and renaming config
   copy:
+    remote_src: yes
+    force: yes
     src: "{{ K3s_config }}"
     dest: ~/.kube/config
+    mode: '0600'
+  ignore_errors: true
   
 - name: Checking if config file is copied to ~/.kube
   stat:
     path: ~/.kube
   register: config_copied
+  ignore_errors: true
 
 - name: fail if copy action is failed
   fail:

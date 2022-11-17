@@ -1,0 +1,54 @@
+---
+## Cert Manager install
+# Version for installation
+cert_manager_version: v1.0.4
+
+# Download url of cert manager 
+cert_manager_download_url: https://github.com/jetstack/cert-manager/releases/download/{{ cert_manager_version }}/cert-manager.yaml
+
+# Namespace of cert manager is installed
+cert_manager_ns: cert-manager
+
+## Helm install
+# Helm version to install
+helm_version: v3.10.2
+
+# Donwload url of helm(is completely blocked in China) Using huaweicloud helm mirror instead
+# see more discussion about it at: https://github.com/helm/helm/issues/7028
+# helm_download_url: https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz
+helm_download_url: https://repo.huaweicloud.com/helm/{{ helm_version }}/helm-{{ helm_version }}-linux-amd64.tar.gz
+
+# Download url of helm(aliyun mirror)
+# helm_download_mirror_url: 
+
+# Location to download helm arch
+helm_download_dir: /usr/local
+
+# Name of downloaded helm
+helm_file_name: helm-{{helm_version}}-linux-amd64.tar.gz
+
+# Unarchive helm.tar.gz helm file loacation
+helm_exector_file_dir: "{{helm_download_dir}}/linux-amd64"
+
+# Location to install helm
+helm_install_dir: /usr/local/bin
+
+## Install kubediag using helm(Temporarily abandoned the method)
+kubediag_repo: https://kubediag.github.io/kubediag-helm
+
+# Default namespace
+kubediag_namespace: kubediag
+
+# Default chart and release name
+kubediag_chart_release_name: kubediag
+
+# Location to save kubediag directory
+kubediag_dir: ~/kubediag
+
+# URL to download kubediag(using gitee miror)
+# kubediag_download_url: https://github.com/kubediag/kubediag.git
+kubediag_download_url: https://gitee.com/codercxf/kubediag.git
+
+## Install docker
+docker_verion: 20.10.9
+
