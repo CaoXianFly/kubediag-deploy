@@ -1,12 +1,10 @@
 ---
-# 执行如下命令：
-# helm repo add kubediag https://kubediag.github.io/kubediag-helm
-# helm repo update
-# helm install kubediag kubediag/kubediag-helm --create-namespace --namespace kubediag
+# Add a taint to current k3s node, 
+# so that kubediag-master and kubediag-agent will not be Schedule to the node
+# TODO:
+- name: Add a taint to current k3s node
+  command: kubectl taint nodes {{ ansible_hostname }} key1=value1:NoSchedule
 
-# 1. 判断kubediag namespace是否已经存在，如果已经存在的话则只会打印debug，否则就进入安装流程；
-# 2. 使用Ansible的helm模块开始执行上述的三条指令；
-# 3. 判断kubediag的Pod状态，是否都是正常的Running状态。
 - name: Getting all namespace information
   command: kubectl get ns -o json
   register: ns_info
@@ -18,10 +16,11 @@
     # msg: "kubediag namespace is already exist"
   when: ns_info.stdout|from_json|json_query('items[?metadata.name == `kubediag`].status.phase') == ["Active"]
 
-# Not exist
+# Not exist or kubediag namespace is not active(error status)
 - name: Printing message that kubediag namespace is starting to install
   debug:
     msg: "kubediag namespace is starting to install"
+
 ## Ansible helm module has bug, so it use command here
 ## Using helm command is error, instead of kubectl
 # - name: Update helm chart repo
@@ -46,21 +45,42 @@
 - name: Downloading kubediag file
   command: git clone {{kubediag_download_url}} ~/kubediag
 
-# FIXME: this is error sometime because pull images timeout
-- name: Applying all config/deploy
-  command: kubectl apply -f {{ kubediag_dir }}/config/deploy
+# Delete tolerations of kubediag-agent(last match)
+# so kubediag-master pod is exist
+- name: Modifying {{ kubediag_deploy_dir }}/manifests.yaml Master and Agent tolerations
+  lineinfile:
+    path: "{{ kubediag_deploy_dir }}/manifests.yaml"
+    regexp: '\t*operator:'
+    line: ''
+    firstmatch: no
 
-  # TODO: waiting for all pods running
+# Sometimes errors occur because of pulling images timeout
+# Temporary solution: Retry task 60 times with interval 5s(60*5s = 5min) util all pod is running status
+- name: Applying all config/deploy
+  command: kubectl apply -f {{ kubediag_deploy_dir }}
+  ignore_errors: true
+
+  # Verifying all pods in kubediag namespace is running
+- name: Verifying all pod is running status at kubediag namespace
+  command: kubectl get pod -n {{ kubediag_namespace }} -o json
+  register: all_pod_info_of_kubediag
+  retries: 60
+  delay: 5
+  until: all_pod_info_of_kubediag.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+
+- name: Waiting all pods of kubediag namespace arrive reach to running status
+  debug: 
+    msg: "All pods of kubediag namespace are running"
 
 - name: Deleteing kubediag directory
   file:
     path: "{{ kubediag_dir }}"
     state: absent
 
+# TODO: temporarily ignore
 # Exist but not in Active status
 # - name: KubeDiag namespace is exist but phase is not Active
 #   blcok:
 #     - name:
-
 #   when: ns_info.stdout|from_json|json_query('items[?metadata.name == `kubediag`].status.phase') != [] and ns_info.stdout|from_json|json_query('items[?metadata.name == `kubediag`].status.phase') != ["Active"]
 

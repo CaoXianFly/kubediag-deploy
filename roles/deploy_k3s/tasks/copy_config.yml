@@ -59,6 +59,7 @@
 - name: Copying k3s.yaml to ~/.kube and renaming config
   copy:
     remote_src: yes
+    # override
     force: yes
     src: "{{ K3s_config }}"
     dest: ~/.kube/config
@@ -67,7 +68,7 @@
   
 - name: Checking if config file is copied to ~/.kube
   stat:
-    path: ~/.kube
+    path: ~/.kube/config
   register: config_copied
   ignore_errors: true
 

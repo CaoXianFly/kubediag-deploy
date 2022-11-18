@@ -9,6 +9,7 @@
     msg: "Cannot get node messages"
   when: "contents.rc != 0"
 
+# `kubectl get node` execute successfully but node is not `Ready` status
 - name: Block of handle execution of this command returns the correct result
   block:
     - name: Checking K3s server is running in Ready status
