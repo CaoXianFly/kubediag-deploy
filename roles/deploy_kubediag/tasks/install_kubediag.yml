@@ -1,9 +1,22 @@
 ---
 # Add a taint to current k3s node, 
 # so that kubediag-master and kubediag-agent will not be Schedule to the node
-# TODO:
+# Adding a duplicate taint will give an error
+
+# FIXME: 这里需要是忽略还是进行判断，判断更好，但是条件有点问题
+# - name: Chcking if k3s node has set taint, will skip if alread taint 
+#   command: kubectl get node {{ ansible_hostname }} -o json 
+#   register: node_info
+
+# # for debug 
+# - name: debuggg
+#   debug:
+#     msg: "{{node_info.stdout|from_json|json_query('spec.taints[?key==`key1`]')}}"
+
 - name: Add a taint to current k3s node
   command: kubectl taint nodes {{ ansible_hostname }} key1=value1:NoSchedule
+  # when: node_info.stdout|from_json|json_query('spec.taints[?key==`key1`]') == ""
+  ignore_errors: true
 
 - name: Getting all namespace information
   command: kubectl get ns -o json

@@ -36,8 +36,8 @@
     - name: Waiting all pods of cert-manager namespace arrive reach to running status
       command: kubectl get pod -n {{ cert_manager_ns }} -o json
       register: pods_describe_info
-      retries: 20
-      delay: 3
+      retries: 60
+      delay: 5
       until: pods_describe_info.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
 
     # Waiting for all pods of cert-manager namespace arrive reach to running status
