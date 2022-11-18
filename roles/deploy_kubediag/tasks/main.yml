@@ -1,10 +1,9 @@
-# 步骤：(查看kubediag 部署过程)
-# 1. 安装cert Manager并验证处于running状态;  安装版本参考Kubernetes 1.20.15;--v.1.0.4
-# 2. 使用helm安装,首先安装helm
-# 3. 然后使用helm安装kuebdiag-具体的步骤查看github安装过程
-# 3. 然后执行`kubectl apply -f config/deploy`,并且验证所有的pod都处于running状态(这里原则上是不需要在容器中执行Master和Agent的,所以这一步可以后续考虑修改kubediag代码)
+- include_tasks: install_docker.yml
 
 - include_tasks: install_cert_manager.yml
 
+# if not use helm to install, the task should not be included
 # - include_tasks: install_helm.yml
+
 - include_tasks: install_kubediag.yml
+

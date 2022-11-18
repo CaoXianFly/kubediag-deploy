@@ -1,0 +1,112 @@
+---
+# Install docker20 using apt repository
+# For debug
+# - name: Print all available facts
+#   ansible.builtin.debug:
+#     var: ansible_facts
+
+- name: Verify gather_facts is useful
+  debug:
+    msg: "{{ansible_distribution}}"
+
+- name: Install docker in Ubuntu distribution
+  block:
+    - name: Asserting current system
+      debug:
+        msg: "ansible_distribution is {{ansible_distribution}} and start to install docker in apt"
+      
+    - name: Removing old versions
+      become: yes
+      command: apt-get remove docker docker-engine docker.io containerd runc -y 
+    
+    - name: Allowing apt to use a repository over HTTPS
+      become: yes
+      command: apt-get install apt-transport-https ca-certificates curl gnupg lsb-release -y
+
+    - name: Getting version of ubuntu (16.04-18.04-20.04-22.04)
+      command: lsb_release -cs
+      register: version_sys
+    
+    # for debug
+    # - name: Debug
+    #   debug:
+    #     msg: "------{{ version_sys.stdout }}-------"
+
+    - name: Deleting GPG key file
+      file:
+        path: /etc/apt/keyrings/
+        state: absent
+
+    - name: Creating directory to save docker-archive-keyring
+      file:
+        path: /etc/apt/keyrings/
+        state: directory
+        mode: '0755'
+
+    - name: Adding docker official GPG key
+      become: yes
+      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+    - name: Setup docker stable repository
+      become: yes
+      shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    
+    - name: Updating apt repo list
+      become: yes
+      command: apt-get update -y
+    
+    - name: Installing the specified version of docker
+      become: yes
+      vars: 
+        VERSION_STRING: "{{docker_verion_ubuntu}}~ubuntu-{{version_sys.stdout}}"
+      shell: apt-get install -y docker-ce={{VERSION_STRING}} docker-ce-cli={{VERSION_STRING}} containerd.io docker-compose-plugin
+ 
+    - name: Printing docker is installed successfully
+      debug:
+        msg: "Docker is installed successfully"
+    
+    - name: Starting docker service after installation
+      systemd: 
+        state: started
+        name: docker
+
+    - name: Enable docker after installation
+      systemd:
+        name: docker
+        enabled: yes
+  when: ansible_distribution == "Ubuntu"
+
+# CentOS(no test on CentOS host)
+- name: Install docker in CentOS distribution
+  block:
+    - name: Asserting current system
+      debug:
+        msg: "ansible_distribution is {{ansible_distribution}} and start to install docker in apt"
+    
+    - name: Removing old versions
+      become: yes
+      command: yum remove -y docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine
+    
+    - name: Installing the yum-utils package
+      become: yes
+      command: yum install -y yum-utils
+
+    - name: Adding repo 
+      become: yes
+      command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    
+    # for debug
+    # - name: Debug
+    #   debug:
+    #     msg: "------{{ version_sys.stdout }}-------"
+    
+    - name: Installing the specified version of docker
+      become: yes
+      vars: 
+        VERSION_STRING: "20.10.0"
+      shell: yum install -y docker-ce-{{VERSION_STRING}} docker-ce-cli={{VERSION_STRING}} containerd.io docker-compose-plugin
+
+    - name: Printing docker is installed successfully
+      debug:
+        msg: "Docker is installed successfully"
+  when: ansible_distribution == "CentOS"

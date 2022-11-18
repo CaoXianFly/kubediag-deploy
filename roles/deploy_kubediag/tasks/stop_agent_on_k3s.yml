@@ -1,0 +1,6 @@
+---
+## Stop Agent process on K3s server node
+# kubectl delete po kubediag-agent-... -n -n kubediag
+# daemonset管理的Pod好像无法手动删除，使用上述命令删除之后还会重新创建一个新的agent
+# K3s节点不允许调度不就可以了，那就是在创建k3s的时候指定不可调度。
+
