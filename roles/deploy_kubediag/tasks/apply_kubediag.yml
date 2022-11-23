@@ -27,16 +27,22 @@
   when: ns_info.stdout|from_json|json_query('items[?metadata.name == `kubediag`].status.phase') == ["Active"]
 
 # Not exist or kubediag namespace is not active(error status)
-- name: Printing message that kubediag namespace is exist and starting to install
+- name: Printing message that kubediag namespace is exist and starting to apply
   debug:
-    msg: "kubediag namespace is starting to install"
+    msg: "kubediag namespace is starting to apply"
 
-- name: Creating kubediag namespace
-  kubernetes.core.k8s:
-    name: "{{ kubediag_namespace }}"
-    api_version: v1
-    kind: Namespace
-    state: present
+- name: Creating {{kubediag_namespace}} namespace if not exist
+  command: kubectl create namespace {{ kubediag_namespace }}
+  when: ns_info.stdout|from_json|json_query('items[?metadata.name==`kubediag`]')==[]
+  
+- name: Getting all namespace information again
+  command: kubectl get ns -o json
+  register: ns_info_again
+
+- name: Exiting because of creating kubediag failed
+  fail:
+    msg: "Exiting because of creating kubediag failed"
+  when: ns_info_again.stdout|from_json|json_query('items[?metadata.name==`kubediag`]')==[]
 
 # Sometimes errors occur because of pulling images timeout
 # Temporary solution: Retry task 60 times with interval 5s(60*5s = 5min) util all pod is running status
