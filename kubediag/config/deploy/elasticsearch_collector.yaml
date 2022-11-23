@@ -1,0 +1,10 @@
+apiVersion: diagnosis.kubediag.org/v1
+kind: Operation
+metadata:
+  name: elasticsearch-collector
+spec:
+  processor:
+    httpServer:
+      path: /processor/elasticsearchCollector
+      scheme: http
+    timeoutSeconds: 60

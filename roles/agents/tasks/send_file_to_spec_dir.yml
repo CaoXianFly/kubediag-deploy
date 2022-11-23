@@ -1,31 +1,55 @@
 ---
 ## Send kubediag exec、kubediag.service and kubediag env file to specified directory
 
-# Chmod for three file
+# kubediag executable file
 - name: Chmod +x for kubediag exec
   file: 
-    path: "{{ kubediag_agent_dir }}/kubediag"
+    path: "{{ exec_in_service_agent }}"
     mode: '0755'
 
+# kubediag parameters file for systemd
 - name: Chmod +r for kubediag.service
   file: 
-    path: "{{service_dir}}/kubediag.service"
+    path: "{{ service_in_kubediag_agent }}"
     mode: '0644'
 
+# kubediag service file for systemd
 - name: Chmod +r for kubediag
   file: 
-    path: "{{service_dir}}/kubediag"
+    path: "{{ para_service_in_kubediag_agent }}"
     mode: '0644'
 
-# distribute file to specific directory from all.yml
+# python3 template file for construct function
+- name: Chmod +r for python3 file
+  file:
+    path: "{{ python3_in_kubediag_agent }}"
+    mode: '0644'
+
+# Distribute file to specific directory from all.yml on agent nodes
 - name: Copying kubediag exec file to {{ kubediag_exec }}
   become: yes
-  command: cp -f {{exec_in_service}} {{ kubediag_exec }}
+  command: cp -f {{ exec_in_service_agent }} {{ kubediag_exec }}
 
 - name: Copying kubediag.service file to {{ kubediag_service }}
   become: yes
-  command: cp -f {{service_in_kubediag}} {{ kubediag_service }}
+  command: cp -f {{ service_in_kubediag_agent }} {{ kubediag_service }}
 
 - name: Copying kubediag env file to {{ kubediag_para }}
   become: yes
-  command: cp -f {{para_service_in_kubediag}} {{ kubediag_para }}
+  command: cp -f {{ para_service_in_kubediag_agent }} {{ kubediag_para }}
+
+# Python3 main file template 
+- name: Checking python3 main file template directory is exist
+  stat: 
+    path: "{{ Python3MainFilePath }}"
+  register: python3_stat
+
+- name: Create python3 directory if not exist
+  file:
+    path: "{{ Python3MainFilePath }}"
+    state: directory
+    mode: '0755'
+  when: not python3_stat.stat.exists
+
+- name: Copying python3 main file template to {{ Python3MainFilePath }}
+  command: cp -f {{ python3_in_kubediag_agent }} {{ Python3MainFilePath }}

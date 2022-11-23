@@ -1,0 +1,4 @@
+---
+- include_tasks: copy_config_and_fix.yml
+
+- include_tasks: determine_para_service.yml

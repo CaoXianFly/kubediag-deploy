@@ -1,0 +1,8 @@
+---
+- name: Execute `systemctl daemon-reload` to reload kubediag.service
+  become: yes
+  command: systemctl daemon-reload
+
+- name: Execute `systemctl start kubediag` to start kubediag service
+  become: yes
+  command: systemctl start kubediag

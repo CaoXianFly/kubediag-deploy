@@ -1,36 +1,45 @@
 ---
+## Parameters about base environment installation
+# Docker version
+docker_verion_ubuntu: 5:20.10.15~3-0
+
+# K3s server version
+K3s_server_version: v1.20.15+k3s1
+
+## Install kubediag para on k3s-server node
+# Cert Manager version
+cert_manager_version: v1.0.4
+
+# Download url of cert manager 
+# FIXME: Access github network error
+# cert_manager_download_url: https://github.com/jetstack/cert-manager/releases/download/{{ cert_manager_version }}/cert-manager.yaml
+cert_manager_download_url: https://gitee.com/codercxf/cert-manager-v1.0.4-yaml_mirror/releases/download/v1.0.4.1/cert-manager.yaml
+
+
 ## Parameters about how to KubeDiag deploy and distribute kubediag/config to agent nodes
-
-# FIXME: URL to download kubediag(using gitee miror)
-# kubediag_download_url: https://github.com/kubediag/kubediag.git
-kubediag_download_url: https://gitee.com/codercxf/kubediag-deploy.git
-
-# Location to save kubediag directory
+# Location to save kubediag directory on k3s node
 kubediag_dir: /root/code/kubediag-deploy/kubediag
 
 # kubediag location on agent nodes
 kubediag_agent_dir: ~/kubediag
 
-## Parameters about kubediag.service by systemd manager
-# location of kubediag exec file 
-kubediag_exec: /usr/local/bin
-
-# location of kubediag.service
-kubediag_service: /etc/systemd/system
-
-# location of parametes of kubediag.service
-kubediag_para: /etc/default
 
 ## Parameters about KubeDiag startup settings
+# KubeDiag is running as an agent
 Mode: agent
 
+# KubeDiag server on 8090 port
 Port: 8090
 
-NodeName: node1
+# NodeName 
+NodeName: node
 
+# The port the metric endpoint to serve on
 MetricsPort: 10357
 
+# Root directory of persistent kubediag data
 DataRoot: /var/lib/kubediag
 
-Python3MainFilePath: /var/lib/kubediag/function-main/python3
+# The main template file for running python3 function
+Python3MainFilePath: "{{ DataRoot }}/function-main"
 

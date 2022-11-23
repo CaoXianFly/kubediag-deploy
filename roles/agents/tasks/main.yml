@@ -1,6 +1,5 @@
 ---
-- include_tasks: dist_kubediag_dir.yml
 
-- include_tasks: determine_para_service.yml
+- include_tasks: dist_kubediag_dir.yml
 
 - include_tasks: send_file_to_spec_dir.yml

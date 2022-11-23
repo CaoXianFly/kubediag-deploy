@@ -1,0 +1,6 @@
+---
+- name: Test deploy_k3s on k3s-server roles
+  hosts: k3s-server
+  gather_facts: True
+  roles:
+    - role: ../../roles/config_and_para_fix

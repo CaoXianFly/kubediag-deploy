@@ -1,0 +1,26 @@
+[Unit]
+Description=KubeDiag Application For Agent Mode
+Documentation=https://github.com/kubediag/kubediag
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/default/kubediag
+
+Type=simple
+
+ExecStart=/usr/local/bin/kubediag --mode=${mode} --port=${port} --metrics-port=${metricsPort} --node-name=${nodeName} --data-root=${dataRoot} --python3-main-file=${python3MainFilePath}/python3
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/bin/kill -15 $MAINPID
+
+RestartSec=3
+Restart=no
+
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
