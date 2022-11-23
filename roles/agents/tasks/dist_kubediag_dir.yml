@@ -5,8 +5,7 @@
     path: "{{ kubediag_agent_dir }}"
     state: absent
 
-# Using copy module is simple but is too slow
-# so use synchronize module instead
+# Using copy module is simple but is too slow, so use synchronize module instead here
 - name: Distributing kubediag directory to all agent nodes
   ansible.posix.synchronize:
     src: "{{ kubediag_dir }}"
@@ -21,7 +20,6 @@
 
 - name: Copying config file from {{ kubediag_agent_dir }} to .kube
   command: cp -pf {{ kubediag_agent_dir }}/kubediag/k3s/config ~/.kube
-
 
 # - name: Getting KUBECONFIG environment variable
 #   shell: echo $KUBECONFIG

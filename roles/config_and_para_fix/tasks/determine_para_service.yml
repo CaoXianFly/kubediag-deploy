@@ -1,0 +1,57 @@
+---
+## Determine service parameters of kubediag startup
+#  from group_vars(user define) to service/kubediag(used by systemd to start kubediag)
+- name: Checking whether the file that save kubediag parameters is exist
+  stat:
+    path: "{{ para_service_in_kubediag }}"
+  register: para_kubediag_service_stat
+
+- name: kubediag env file is not exist
+  fail:
+    msg: "kubediag env file is not exist"
+  when: not para_kubediag_service_stat.stat.exists
+
+# Mode
+- name: Write startup parameters 'Mode' from all.yml that user define to kuebdiag file that used by systemd
+  lineinfile:
+    path: "{{ para_service_in_kubediag }}"
+    regexp: '^mode='
+    line: mode={{ Mode }}
+
+# Port
+- name: Write startup parameters 'Port' from all.yml that user define to kuebdiag file that used by systemd
+  lineinfile:
+    path: "{{ para_service_in_kubediag }}"
+    regexp: '^port='
+    line: port={{ Port }}
+
+# NodeName
+- name: Write startup parameters 'NodeName' from all.yml that user define to kuebdiag file that used by systemd
+  lineinfile:
+    path: "{{ para_service_in_kubediag }}"
+    regexp: '^nodeName='
+    line: nodeName={{ NodeName }}
+
+# MetricsPort
+- name: Write startup parameters 'MetricsPort' from all.yml that user define to kuebdiag file that used by systemd
+  lineinfile:
+    path: "{{ para_service_in_kubediag }}"
+    regexp: '^metricsPort='
+    line: metricsPort={{ MetricsPort }}
+
+# DataRoot
+- name: Write startup parameters 'DataRoot' from all.yml that user define to kuebdiag file that used by systemd
+  lineinfile:
+    path: "{{ para_service_in_kubediag }}"
+    regexp: '^dataRoot='
+    line: dataRoot={{ DataRoot }}
+
+# Python3MainFilePath
+- name: Write startup parameters 'Python3MainFilePath' from all.yml that user define to kuebdiag file that used by systemd
+  lineinfile:
+    path: "{{ para_service_in_kubediag }}"
+    regexp: '^python3MainFilePath='
+    line: python3MainFilePath={{ Python3MainFilePath }}
+
+
+  

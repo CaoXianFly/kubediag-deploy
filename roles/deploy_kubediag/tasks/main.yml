@@ -7,6 +7,3 @@
 
 - include_tasks: apply_kubediag.yml
 
-- include_tasks: copy_config_and_fix.yml
-
-

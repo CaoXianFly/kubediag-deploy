@@ -1,0 +1,21 @@
+---
+- name: Uninstall agent nodes deployd environment
+  hosts: agents
+  gather_facts: True
+  tasks:
+  - name: Removing kubediag executable file {{ kubediag_exec }}
+    command: rm -rf {{ kubediag_exec }}/kubediag
+
+  - name: Removing kubediag service file for systemd managing {{ kubediag_service }}
+    command: rm -rf {{ kubediag_service }}/kubediag.service
+
+  - name: Removing kubediag parameters file for systemd managing {{ kubediag_para }}
+    command: rm -rf {{ kubediag_para }}/kubediag
+
+  - name: Removing data root directory on agent nodes
+    command: rm -rf {{ DataRoot }}
+  - name: Removing kubediag directory on agent nodes on {{kubediag_agent_dir}}
+    command: rm -rf {{ kubediag_agent_dir }}
+  
+  - name: Removing config file and refering .kubediag directory on agent nodes
+    command: rm -rf ~/.kube

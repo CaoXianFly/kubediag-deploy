@@ -57,13 +57,6 @@
 # block3: no block wrapper is the same.
 # Copy k3s.yaml to ~/.kube for kubectl tool
 - name: Copying k3s.yaml to ~/.kube and renaming config
-  # copy:
-  #   # FIXME: copy module is not appropriate here
-  #   # remote_src: yes
-  #   force: yes
-  #   src: "{{ K3s_config }}"
-  #   dest: ~/.kube/config
-  #   mode: '0600'
   command: cp -pf {{ K3s_config }} ~/.kube/config
   ignore_errors: true
   

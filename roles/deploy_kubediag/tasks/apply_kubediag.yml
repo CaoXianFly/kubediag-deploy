@@ -2,7 +2,6 @@
 # Add a taint to current k3s node, 
 # so that kubediag-master and kubediag-agent will not be Schedule to the node
 # It is note that Adding a duplicate taint will give an error
-
 - name: Chcking if k3s node has set taint, will skip if alread taint 
   command: kubectl get node {{ ansible_hostname }} -o json 
   register: node_info
@@ -15,7 +14,6 @@
 - name: Add a taint to current k3s node
   command: kubectl taint nodes {{ ansible_hostname }} key1=value1:NoSchedule
   when: not node_info.stdout|from_json|json_query('spec.taints')
-  # ignore_errors: true
 
 - name: Getting all namespace information
   command: kubectl get ns -o json
@@ -39,15 +37,6 @@
     api_version: v1
     kind: Namespace
     state: present
-
-## Delete tolerations of kubediag-agent(last match)
-# so kubediag-master pod is exist
-# - name: Modifying {{ kubediag_deploy_dir }}/manifests.yaml Master and Agent tolerations
-#   lineinfile:
-#     path: "{{ kubediag_deploy_dir }}/manifests.yaml"
-#     regexp: '\t*operator:'
-#     line: ''
-#     firstmatch: no
 
 # Sometimes errors occur because of pulling images timeout
 # Temporary solution: Retry task 60 times with interval 5s(60*5s = 5min) util all pod is running status
