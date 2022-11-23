@@ -4,47 +4,28 @@ if which ansible; then
     echo "====> { Ansible has been installed }"
 fi
 
-# Install python3 and pip3
+# Install openssl-devel
+if which openssl; then
+    echo "====> { openssl-devel has been installed! }"
+else
+    sudo yum install openssl-devel -y
+
+    sudo apt-get install openssl
+    sudo apt-get install libssl-dev
+    if which openssl; then
+        echo "==== > { openssl-dev installed successfully! }"
+    else
+        echo "==== > { openssl-devel installed failed! }"
+        exit -1
+    fi
+fi
+
+# Install python3 if not exist
 PY3_VERSION=6
 if which python3; then
     PY3_VERSION=`python3 -V 2>&1|awk '{print $2}'|awk -F '.' '{print int($2)}'`
-    echo $PY3_VERSION
-    # Install pip3
-    if which pip3; then
-        echo "====> { pip3 has been installed! }"
-    else 
-        if which apt; then
-            apt install python3-pip -y
-        elif which yum; then
-            yum install python3-pip -y
-        else
-            echo "====> { Unknown package manager! }"
-        # curl https://bootstrap.pypa.io/pip/3.${PY3_VERSION}/get-pip.py -o get-pip.py
-        # python3 get-pip.py
-        fi
-        if which pip3; then
-            echo "====> { pip3 is installed successfully! }"
-        else 
-            echo "====> { pip3 install failed! }"
-            exit -1
-        fi
-    fi
+    echo python${PY3_VERSION}
 else
-    # Install openssl-devel
-    if which openssl; then
-        echo "====> { openssl-devel has been installed! }"
-    else
-        sudo yum install openssl-devel -y
-    
-        sudo apt-get install openssl
-        sudo apt-get install libssl-dev
-        if which openssl; then
-            echo "==== > { openssl-dev installed successfully! }"
-        else
-            echo "==== > { openssl-devel installed failed! }"
-            exit -1
-        fi
-    fi
     INSTALL_PREFIX=/usr/local/python3.6.8
     # Python3.6.8 now
     wget https://www.python.org/ftp/python/3.6.8/Python-3.6.8.tgz
@@ -61,26 +42,26 @@ else
     # Override old softlink, please use `-b` para.
     ln -sb ${INSTALL_PREFIX}/bin/* /usr/bin
     echo "====> { Python3.6.8 installed successfully! }"
+fi
 
-    # Install pip3
+# Install pip3 if not exist
+if which pip3; then
+    pip3 --version
+else 
+    if which apt; then
+        apt install python3-pip -y
+    elif which yum; then
+        yum install python3-pip -y
+    else
+        echo "====> { Unknown package manager! }"
+    # curl https://bootstrap.pypa.io/pip/3.${PY3_VERSION}/get-pip.py -o get-pip.py
+    # python3 get-pip.py
+    fi
     if which pip3; then
-        echo "====> { pip3 has been installed! }"
+        echo "====> { pip3 is installed successfully! }"
     else 
-        if which apt; then
-            apt install python3-pip -y
-        elif which yum; then
-            yum install python3-pip -y
-        else
-            echo "====> { Unknown package manager! }"
-        # curl https://bootstrap.pypa.io/pip/3.${PY3_VERSION}/get-pip.py -o get-pip.py
-        # python3 get-pip.py
-        fi
-        if which pip3; then
-            echo "====> { pip3 is installed successfully! }"
-        else 
-            echo "====> { pip3 install failed! }"
-            exit -1
-        fi
+        echo "====> { pip3 install failed! }"
+        exit -1
     fi
 fi
 
@@ -89,7 +70,7 @@ ANSIBLE_VERSION=2.11
 if [ $PY3_VERSION -ge 10 ]; then
     ANSIBLE_VERSION=2.12
 fi
-echo "====> { Ansible$ANSIBLE_VERSION will be installed on local }"
+echo "====> { Ansible$ANSIBLE_VERSION will be installed on local host }"
 
 # Start install Ansible
 pip3 install --upgrade pip
@@ -104,9 +85,10 @@ fi
 
 # Install ansible kubernetes module
 # see at https://github.com/ansible-collections/kubernetes.core/issues/159#issuecomment-873920322
-pip install --ignore-installed kubernetes
-
 kubernetes_core_dir=~/kubernetes.core
+pip3 install --ignore-installed kubernetes
+
+# Install kubernetes.core collection to use kubernetes.core.k8s
 if [ $? -eq 0 ]; then
     # not exist
     if [ ! -d "$kubernetes_core_dir" ]; then
@@ -122,11 +104,11 @@ if [ $? -eq 0 ]; then
         fi
     fi
         mkdir -p ~/.ansible/plugins/modules
-        cp ~/kubernetes.core/plugins/action/k8s.py ~/.ansible/plugins/modules/
+        cp ~/kubernetes.core/plugins/action/* ~/.ansible/plugins/modules/
         ansible-galaxy collection install kubernetes.core
         rm -rf ~/kubernetes.core
         if [ $? -eq 0 ]; then
-            echo "====> { Ansible module kubernetes.core installed success }"
+            echo "====> { Ansible module kubernetes.core installed successfully }"
         else
             echo "====> { Ansible module kubernetes.core install failed and exit -1 }"
             exit -1

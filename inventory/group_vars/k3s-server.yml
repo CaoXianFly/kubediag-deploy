@@ -1,5 +1,8 @@
 ---
 ## 
+# Location to save kubediag directory on k3s node
+kubediag_dir: ../../../kubediag
+
 # Location to save config for distribution(must inside kubediag directory)
 config_in_kubediag: "{{ kubediag_dir }}/k3s"
 
