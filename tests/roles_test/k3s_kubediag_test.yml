@@ -1,3 +1,4 @@
+---
 - name: Test install k3s and deploy kubediag 
   hosts: k3s-server
   gather_facts: True
