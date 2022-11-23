@@ -5,5 +5,8 @@
 # if not use helm to install, the task should not be included
 # - include_tasks: install_helm.yml
 
-- include_tasks: install_kubediag.yml
+- include_tasks: apply_kubediag.yml
+
+- include_tasks: copy_config_and_fix.yml
+
 

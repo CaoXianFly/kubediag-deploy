@@ -33,8 +33,9 @@
 
     - name: Creating helm link to {{helm_install_dir}}
       become: yes
+      # FIXME: copy module is not appropriate here
       copy:
-        remote_src: yes
+        # remote_src: yes
         force: yes
         src: "{{ helm_exector_file_dir }}/helm"
         dest: "{{ helm_install_dir }}/helm"

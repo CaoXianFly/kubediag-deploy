@@ -1,0 +1,6 @@
+---
+- name: Test agent nodes to get kubediag project and config fiel
+  hosts: agents
+  gather_facts: True
+  roles:
+    - role: ../../roles/agents

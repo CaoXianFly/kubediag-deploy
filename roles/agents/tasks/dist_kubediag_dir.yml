@@ -1,0 +1,50 @@
+---
+# Delete existing kubediag directory
+- name: Deleteing old kubediag project on all agent nodes at {{ kubediag_agent_dir }}
+  file:
+    path: "{{ kubediag_agent_dir }}"
+    state: absent
+
+# Using copy module is simple but is too slow
+# so use synchronize module instead
+- name: Distributing kubediag directory to all agent nodes
+  ansible.posix.synchronize:
+    src: "{{ kubediag_dir }}"
+    dest: "{{ kubediag_agent_dir }}"
+
+# FIXME: Override KUBECONFIG
+- name: Checking directory kube is exist or create if not exist
+  file: 
+    path: ~/.kube
+    state: directory
+    mode: '0755'
+
+- name: Copying config file from {{ kubediag_agent_dir }} to .kube
+  command: cp -pf {{ kubediag_agent_dir }}/kubediag/k3s/config ~/.kube
+
+
+# - name: Getting KUBECONFIG environment variable
+#   shell: echo $KUBECONFIG
+#   register: kc_var
+
+# - name: Checking .bashrc file if exist
+#   stat: 
+#     path: ~/.bashrc
+#   register: bashrc_file_stat
+
+# - name: Create ~/.bashrc to set environment variable when file is not exist
+#   file: 
+#     path: ~/.bashrc
+#     state: touch
+#   when: not bashrc_file_stat.stat.exists
+
+# # TODO: Append environment but not replace
+# # # Modify .bashrc 
+# - name: Setting KUBECONFIG environment variable
+#   lineinfile:
+#     path: ~/.bashrc
+#     regex: '\s*export\s*KUBECONFIG'
+#     line: "export KUBECONFIG={{kubediag_agent_dir}}/kubediag/k3s/config"
+
+# - name: source .bashrc
+#   shell: . ~/.bashrc

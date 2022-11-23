@@ -1,0 +1,31 @@
+---
+## Send kubediag exec、kubediag.service and kubediag env file to specified directory
+
+# Chmod for three file
+- name: Chmod +x for kubediag exec
+  file: 
+    path: "{{ kubediag_agent_dir }}/kubediag"
+    mode: '0755'
+
+- name: Chmod +r for kubediag.service
+  file: 
+    path: "{{service_dir}}/kubediag.service"
+    mode: '0644'
+
+- name: Chmod +r for kubediag
+  file: 
+    path: "{{service_dir}}/kubediag"
+    mode: '0644'
+
+# distribute file to specific directory from all.yml
+- name: Copying kubediag exec file to {{ kubediag_exec }}
+  become: yes
+  command: cp -f {{exec_in_service}} {{ kubediag_exec }}
+
+- name: Copying kubediag.service file to {{ kubediag_service }}
+  become: yes
+  command: cp -f {{service_in_kubediag}} {{ kubediag_service }}
+
+- name: Copying kubediag env file to {{ kubediag_para }}
+  become: yes
+  command: cp -f {{para_service_in_kubediag}} {{ kubediag_para }}

@@ -1,0 +1,36 @@
+---
+## Parameters about how to KubeDiag deploy and distribute kubediag/config to agent nodes
+
+# FIXME: URL to download kubediag(using gitee miror)
+# kubediag_download_url: https://github.com/kubediag/kubediag.git
+kubediag_download_url: https://gitee.com/codercxf/kubediag-deploy.git
+
+# Location to save kubediag directory
+kubediag_dir: /root/code/kubediag-deploy/kubediag
+
+# kubediag location on agent nodes
+kubediag_agent_dir: ~/kubediag
+
+## Parameters about kubediag.service by systemd manager
+# location of kubediag exec file 
+kubediag_exec: /usr/local/bin
+
+# location of kubediag.service
+kubediag_service: /etc/systemd/system
+
+# location of parametes of kubediag.service
+kubediag_para: /etc/default
+
+## Parameters about KubeDiag startup settings
+Mode: agent
+
+Port: 8090
+
+NodeName: node1
+
+MetricsPort: 10357
+
+DataRoot: /var/lib/kubediag
+
+Python3MainFilePath: /var/lib/kubediag/function-main/python3
+

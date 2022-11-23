@@ -1,22 +1,21 @@
 ---
 # Add a taint to current k3s node, 
 # so that kubediag-master and kubediag-agent will not be Schedule to the node
-# Adding a duplicate taint will give an error
+# It is note that Adding a duplicate taint will give an error
 
-# FIXME: 这里需要是忽略还是进行判断，判断更好，但是条件有点问题
-# - name: Chcking if k3s node has set taint, will skip if alread taint 
-#   command: kubectl get node {{ ansible_hostname }} -o json 
-#   register: node_info
+- name: Chcking if k3s node has set taint, will skip if alread taint 
+  command: kubectl get node {{ ansible_hostname }} -o json 
+  register: node_info
 
-# # for debug 
-# - name: debuggg
-#   debug:
-#     msg: "{{node_info.stdout|from_json|json_query('spec.taints[?key==`key1`]')}}"
+# for debug 
+- name: debuggg
+  debug:
+    msg: "{{node_info.stdout|from_json|json_query('spec.taints')}}"
 
 - name: Add a taint to current k3s node
   command: kubectl taint nodes {{ ansible_hostname }} key1=value1:NoSchedule
-  # when: node_info.stdout|from_json|json_query('spec.taints[?key==`key1`]') == ""
-  ignore_errors: true
+  when: not node_info.stdout|from_json|json_query('spec.taints')
+  # ignore_errors: true
 
 - name: Getting all namespace information
   command: kubectl get ns -o json
@@ -30,18 +29,9 @@
   when: ns_info.stdout|from_json|json_query('items[?metadata.name == `kubediag`].status.phase') == ["Active"]
 
 # Not exist or kubediag namespace is not active(error status)
-- name: Printing message that kubediag namespace is starting to install
+- name: Printing message that kubediag namespace is exist and starting to install
   debug:
     msg: "kubediag namespace is starting to install"
-
-## Ansible helm module has bug, so it use command here
-## Using helm command is error, instead of kubectl
-# - name: Update helm chart repo
-#   command: helm repo update {{ kubediag_chart_release_name }} 
-#   ignore_errors: true
-
-# - name: Deploy kubediag latest version of kubediag chart inside kubediag namespace(and create it)
-#   command: helm install kubediag kubediag/kubediag-helm --create-namespace --namespace kubediag
 
 - name: Creating kubediag namespace
   kubernetes.core.k8s:
@@ -49,23 +39,15 @@
     api_version: v1
     kind: Namespace
     state: present
-  
-- name: Deleteing existing kubediag directory
-  file: 
-    path: "{{ kubediag_dir }}"
-    state: absent
 
-- name: Downloading kubediag file
-  command: git clone {{kubediag_download_url}} ~/kubediag
-
-# Delete tolerations of kubediag-agent(last match)
+## Delete tolerations of kubediag-agent(last match)
 # so kubediag-master pod is exist
-- name: Modifying {{ kubediag_deploy_dir }}/manifests.yaml Master and Agent tolerations
-  lineinfile:
-    path: "{{ kubediag_deploy_dir }}/manifests.yaml"
-    regexp: '\t*operator:'
-    line: ''
-    firstmatch: no
+# - name: Modifying {{ kubediag_deploy_dir }}/manifests.yaml Master and Agent tolerations
+#   lineinfile:
+#     path: "{{ kubediag_deploy_dir }}/manifests.yaml"
+#     regexp: '\t*operator:'
+#     line: ''
+#     firstmatch: no
 
 # Sometimes errors occur because of pulling images timeout
 # Temporary solution: Retry task 60 times with interval 5s(60*5s = 5min) util all pod is running status
@@ -84,11 +66,6 @@
 - name: Waiting all pods of kubediag namespace arrive reach to running status
   debug: 
     msg: "All pods of kubediag namespace are running"
-
-- name: Deleteing kubediag directory
-  file:
-    path: "{{ kubediag_dir }}"
-    state: absent
 
 # TODO: temporarily ignore
 # Exist but not in Active status

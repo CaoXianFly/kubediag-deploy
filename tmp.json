@@ -3,7 +3,7 @@
     "kind": "Node",
     "metadata": {
         "annotations": {
-            "flannel.alpha.coreos.com/backend-data": "{\"VNI\":1,\"VtepMAC\":\"b2:9c:ab:73:20:0b\"}",
+            "flannel.alpha.coreos.com/backend-data": "{\"VNI\":1,\"VtepMAC\":\"ee:97:3e:f1:44:74\"}",
             "flannel.alpha.coreos.com/backend-type": "vxlan",
             "flannel.alpha.coreos.com/kube-subnet-manager": "true",
             "flannel.alpha.coreos.com/public-ip": "192.168.0.26",
@@ -13,7 +13,7 @@
             "node.alpha.kubernetes.io/ttl": "0",
             "volumes.kubernetes.io/controller-managed-attach-detach": "true"
         },
-        "creationTimestamp": "2022-11-18T12:49:49Z",
+        "creationTimestamp": "2022-11-18T12:58:56Z",
         "finalizers": [
             "wrangler.cattle.io/node"
         ],
@@ -177,19 +177,38 @@
                 },
                 "manager": "k3s",
                 "operation": "Update",
-                "time": "2022-11-18T12:50:49Z"
+                "time": "2022-11-18T13:00:57Z"
+            },
+            {
+                "apiVersion": "v1",
+                "fieldsType": "FieldsV1",
+                "fieldsV1": {
+                    "f:spec": {
+                        "f:taints": {}
+                    }
+                },
+                "manager": "kubectl-taint",
+                "operation": "Update",
+                "time": "2022-11-18T13:02:22Z"
             }
         ],
         "name": "non-containerized-k3s-node",
-        "resourceVersion": "983",
-        "uid": "f3643a43-8c68-4e9b-b789-92a5aad912d5"
+        "resourceVersion": "483869",
+        "uid": "22569e69-0339-48dc-9091-a84bb3deaff6"
     },
     "spec": {
         "podCIDR": "10.42.0.0/24",
         "podCIDRs": [
             "10.42.0.0/24"
         ],
-        "providerID": "k3s://non-containerized-k3s-node"
+        "providerID": "k3s://non-containerized-k3s-node",
+        "taints": [
+            {
+                "effect": "NoSchedule",
+                "key": "key1",
+                "value": "value1"
+            }
+        ]
     },
     "status": {
         "addresses": [
@@ -220,40 +239,40 @@
         },
         "conditions": [
             {
-                "lastHeartbeatTime": "2022-11-18T12:50:04Z",
-                "lastTransitionTime": "2022-11-18T12:50:04Z",
+                "lastHeartbeatTime": "2022-11-18T12:59:15Z",
+                "lastTransitionTime": "2022-11-18T12:59:15Z",
                 "message": "Flannel is running on this node",
                 "reason": "FlannelIsUp",
                 "status": "False",
                 "type": "NetworkUnavailable"
             },
             {
-                "lastHeartbeatTime": "2022-11-18T12:53:20Z",
-                "lastTransitionTime": "2022-11-18T12:49:49Z",
+                "lastHeartbeatTime": "2022-11-21T02:00:40Z",
+                "lastTransitionTime": "2022-11-18T12:58:56Z",
                 "message": "kubelet has sufficient memory available",
                 "reason": "KubeletHasSufficientMemory",
                 "status": "False",
                 "type": "MemoryPressure"
             },
             {
-                "lastHeartbeatTime": "2022-11-18T12:53:20Z",
-                "lastTransitionTime": "2022-11-18T12:49:49Z",
+                "lastHeartbeatTime": "2022-11-21T02:00:40Z",
+                "lastTransitionTime": "2022-11-18T12:58:56Z",
                 "message": "kubelet has no disk pressure",
                 "reason": "KubeletHasNoDiskPressure",
                 "status": "False",
                 "type": "DiskPressure"
             },
             {
-                "lastHeartbeatTime": "2022-11-18T12:53:20Z",
-                "lastTransitionTime": "2022-11-18T12:49:49Z",
+                "lastHeartbeatTime": "2022-11-21T02:00:40Z",
+                "lastTransitionTime": "2022-11-18T12:58:56Z",
                 "message": "kubelet has sufficient PID available",
                 "reason": "KubeletHasSufficientPID",
                 "status": "False",
                 "type": "PIDPressure"
             },
             {
-                "lastHeartbeatTime": "2022-11-18T12:53:20Z",
-                "lastTransitionTime": "2022-11-18T12:49:59Z",
+                "lastHeartbeatTime": "2022-11-21T02:00:40Z",
+                "lastTransitionTime": "2022-11-18T12:59:06Z",
                 "message": "kubelet is posting ready status. AppArmor enabled",
                 "reason": "KubeletReady",
                 "status": "True",
@@ -275,6 +294,13 @@
             },
             {
                 "names": [
+                    "docker.io/rancher/klipper-helm@sha256:961459b8641aa77dae39c96ba8efba88805a8949dcaafa131d1aecc1510128bf",
+                    "docker.io/rancher/klipper-helm:v0.6.6-build20211022"
+                ],
+                "sizeBytes": 84453835
+            },
+            {
+                "names": [
                     "quay.io/jetstack/cert-manager-controller@sha256:a326879e9649e62dc04bd9cfb3cba71b5c599bf346b437986f10dac5bb356a9f",
                     "quay.io/jetstack/cert-manager-controller:v1.0.4"
                 ],
@@ -293,6 +319,27 @@
                     "quay.io/jetstack/cert-manager-cainjector:v1.0.4"
                 ],
                 "sizeBytes": 19399455
+            },
+            {
+                "names": [
+                    "docker.io/rancher/local-path-provisioner@sha256:9666b1635fec95d4e2251661e135c90678b8f45fd0f8324c55db99c80e2a958c",
+                    "docker.io/rancher/local-path-provisioner:v0.0.19"
+                ],
+                "sizeBytes": 13585626
+            },
+            {
+                "names": [
+                    "docker.io/rancher/coredns-coredns@sha256:9d4f5d7968c432fbd4123f397a2d6ab666fd63d13d510d9728d717c3e002dc72",
+                    "docker.io/rancher/coredns-coredns:1.8.3"
+                ],
+                "sizeBytes": 12892729
+            },
+            {
+                "names": [
+                    "docker.io/rancher/metrics-server@sha256:b85628b103169d7db52a32a48b46d8942accb7bde3709c0a4888a23d035f9f1e",
+                    "docker.io/rancher/metrics-server:v0.3.6"
+                ],
+                "sizeBytes": 10543877
             },
             {
                 "names": [

@@ -1,0 +1,12 @@
+##
+# Location of service
+service_dir: "{{ kubediag_agent_dir }}/kubediag/service"
+
+# Location of kubediag exec file
+exec_in_service: "{{ kubediag_agent_dir }}/kubediag/kubediag"
+
+# Location to save systemd service file of kubediag(must inside kubediag directory)
+service_in_kubediag: "{{ kubediag_agent_dir }}/kubediag/service/kubediag.service"
+
+# File that save kubediag.service parameters
+para_service_in_kubediag: "{{ kubediag_agent_dir }}/kubediag/service/kubediag"
