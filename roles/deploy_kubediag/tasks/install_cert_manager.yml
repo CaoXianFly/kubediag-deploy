@@ -1,7 +1,7 @@
 ---
 # Install if cert-manager namespace is not exist or phase is not Active
 - name: Installing Cert Manager on k3s server
-  command: kubectl apply --validate=false -f {{ cert_manager_download_url }}
+  command: kubectl apply --validate=false -f {{ cert_manager_file_path }}
   register: install_ret
   ignore_errors: true
 

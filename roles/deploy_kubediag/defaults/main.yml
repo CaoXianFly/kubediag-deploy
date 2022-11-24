@@ -33,9 +33,6 @@ kubediag_chart_release_name: kubediag
 # Namespace of cert manager is installed
 cert_manager_ns: cert-manager
 
-# Location of config/deploy
-kubediag_deploy_dir: "{{kubediag_dir}}/config/deploy"
-
 # kubediag default namepace 
 kubediag_namespace: kubediag
 

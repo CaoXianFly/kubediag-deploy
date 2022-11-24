@@ -2,5 +2,15 @@
 rm -rf ~/.kube/*
 sh /usr/local/bin/k3s-uninstall.sh
 
-# export INSTALL_K3S_VERSION=v1.20.15+k3s1
-# curl -sfL https://rancher-mirror.oss-cn-beijing.aliyuncs.com/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -
+apt-get remove docker docker-engine docker.io containerd runc -y
+
+yum remove docker \
+                docker-client \
+                docker-client-latest \
+                docker-common \
+                docker-latest \
+                docker-latest-logrotate \
+                docker-logrotate \
+                docker-engine \
+                podman \
+                runc

@@ -1,4 +1,6 @@
 ---
+- include_tasks: install_docker.yml
+
 - include_tasks: install_k3s.yml
 
 # Copy /etc/rancher/k3s/k3s.yaml to .kube/config

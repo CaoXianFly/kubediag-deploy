@@ -8,7 +8,7 @@
 - name: Copying config file to kubediag/k3s directory
   command: cp -pf ~/.kube/config {{ config_in_kubediag }}/config
 
-# 需要修改config文件中的server:https://127.0.0.1:6443为局域网地址，否则无法访问集群
+# Update server ip tp local network instead og 127.0.0.1
 - name: Modify server ip of config file for APIServer
   lineinfile:
     path: "{{ config_in_kubediag }}/config"

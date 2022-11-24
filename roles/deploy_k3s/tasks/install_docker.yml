@@ -1,6 +1,7 @@
 ---
 # Install docker20 using apt repository
-# For debug
+
+# for debug
 # - name: Print all available facts
 #   ansible.builtin.debug:
 #     var: ansible_facts
@@ -26,11 +27,6 @@
     - name: Getting version of ubuntu (16.04-18.04-20.04-22.04)
       command: lsb_release -cs
       register: version_sys
-    
-    # for debug
-    # - name: Debug
-    #   debug:
-    #     msg: "------{{ version_sys.stdout }}-------"
 
     - name: Deleting GPG key file
       file:
@@ -94,11 +90,6 @@
     - name: Adding repo 
       become: yes
       command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-    
-    # for debug
-    # - name: Debug
-    #   debug:
-    #     msg: "------{{ version_sys.stdout }}-------"
     
     - name: Installing the specified version of docker
       become: yes

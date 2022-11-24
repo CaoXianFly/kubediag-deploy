@@ -1,8 +1,4 @@
 #!/bin/sh
-if which ansible; then
-    ansible -V
-    echo "====> { Ansible has been installed }"
-fi
 
 # Install openssl-devel
 if which openssl; then
@@ -65,6 +61,10 @@ else
     fi
 fi
 
+# Create virtual env
+pip3 install virtualenv
+VENDIR=kubediag-env
+rm -rf $VENDIR
 # No support python3.11 or later version
 ANSIBLE_VERSION=2.11
 if [ $PY3_VERSION -ge 10 ]; then
@@ -72,6 +72,8 @@ if [ $PY3_VERSION -ge 10 ]; then
 fi
 echo "====> { Ansible$ANSIBLE_VERSION will be installed on local host }"
 
+virtualenv --python=$(which python3) $VENDIR
+. $VENDIR/bin/activate
 # Start install Ansible
 pip3 install --upgrade pip
 pip3 install -U -r requirements-$ANSIBLE_VERSION.txt
@@ -83,38 +85,4 @@ else
     exit -1
 fi
 
-# Install ansible kubernetes module
-# see at https://github.com/ansible-collections/kubernetes.core/issues/159#issuecomment-873920322
-kubernetes_core_dir=~/kubernetes.core
-pip3 install --ignore-installed kubernetes
-
-# Install kubernetes.core collection to use kubernetes.core.k8s
-if [ $? -eq 0 ]; then
-    # not exist
-    if [ ! -d "$kubernetes_core_dir" ]; then
-        # FIXME: Clone fail sometime because of network to github
-        #       We provide a gitee mirror for domestic users
-        echo "===> { kubernetes.core directory is not exist, git cloning but maybe fail because of network... }"
-        # git clone https://github.com/ansible-collections/kubernetes.core.git ~/kubernetes.core
-        git clone https://gitee.com/codercxf/kubernetes.core.git ~/kubernetes.core
-        if [ ! -d "$kubernetes_core_dir" ]; then
-            echo "$kubernetes_core_dir is not exist" 
-            echo "====> { git clone failed and exit with -1 }"
-            exit -1
-        fi
-    fi
-        mkdir -p ~/.ansible/plugins/modules
-        cp ~/kubernetes.core/plugins/action/* ~/.ansible/plugins/modules/
-        ansible-galaxy collection install kubernetes.core
-        rm -rf ~/kubernetes.core
-        if [ $? -eq 0 ]; then
-            echo "====> { Ansible module kubernetes.core installed successfully }"
-        else
-            echo "====> { Ansible module kubernetes.core install failed and exit -1 }"
-            exit -1
-        fi
-        
-else
-    echo "====> { Ansible module kubernetes.core install failed and exit -1 }"
-    exit -1
-fi
+# . $VENDIR/bin/activate
