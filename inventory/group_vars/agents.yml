@@ -8,7 +8,7 @@ kubediag_service: /etc/systemd/system
 # location of parametes of kubediag.service
 kubediag_para: /etc/default
 
-##
+## 
 # Location of service
 service_dir_agent: "{{ kubediag_agent_dir }}/kubediag/service"
 
@@ -22,4 +22,3 @@ service_in_kubediag_agent: "{{ kubediag_agent_dir }}/kubediag/service/kubediag.s
 para_service_in_kubediag_agent: "{{ kubediag_agent_dir }}/kubediag/service/kubediag"
 
 python3_in_kubediag_agent: "{{ kubediag_agent_dir }}/kubediag/python3/python3"
-

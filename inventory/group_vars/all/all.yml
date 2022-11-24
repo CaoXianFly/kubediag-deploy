@@ -6,19 +6,9 @@ docker_verion_ubuntu: 5:20.10.15~3-0
 # K3s server version
 K3s_server_version: v1.20.15+k3s1
 
-## Install kubediag para on k3s-server node
-# Cert Manager version
-cert_manager_version: v1.0.4
-
-# Download url of cert manager 
-# FIXME: Access github network error
-# cert_manager_download_url: https://github.com/jetstack/cert-manager/releases/download/{{ cert_manager_version }}/cert-manager.yaml
-cert_manager_download_url: https://gitee.com/codercxf/cert-manager-v1.0.4-yaml_mirror/releases/download/v1.0.4.1/cert-manager.yaml
-
-## kubediag_deploy down location on agent nodes
+## kubediag_deploy location that copying to agent nodes
 # kubediag location on agent nodes
 kubediag_agent_dir: ~/kubediag
-
 
 ## Parameters about KubeDiag startup settings
 # KubeDiag is running as an agent

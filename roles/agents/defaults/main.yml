@@ -1,1 +1,3 @@
 ---
+# The dir is the same as k3s-server.yml to locate kubediag driectory
+kubediag_dir: "{{lookup('ansible.builtin.env', 'PWD')}}/kubediag"

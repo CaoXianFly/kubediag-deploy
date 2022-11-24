@@ -1,13 +1,16 @@
 ---
-## 
+## File path of kubediag directory
 # Location to save kubediag directory on k3s node
-kubediag_dir: ../../../kubediag
+kubediag_dir: "{{ lookup('ansible.builtin.env', 'PWD') }}/kubediag"
+
+# Location of config/deploy
+kubediag_deploy_dir: "{{ kubediag_dir }}/config/deploy"
 
 # Location to save config for distribution(must inside kubediag directory)
 config_in_kubediag: "{{ kubediag_dir }}/k3s"
 
 # Location of service
-service_dir: "{{ kubediagdir }}/service"
+service_dir: "{{ kubediag_dir }}/service"
 
 # Location of kubediag exec file
 exec_in_service: "{{ kubediag_dir }}/kubediag"
@@ -17,6 +20,15 @@ service_in_kubediag: "{{ kubediag_dir }}/service/kubediag.service"
 
 # File that save kubediag.service parameters
 para_service_in_kubediag: "{{ kubediag_dir }}/service/kubediag"
+
+## Cert Manager installation
+# Cert Manager version
+cert_manager_version: v1.0.4
+
+# Cert manager yaml file path
+cert_manager_file_path: "{{ kubediag_dir }}/cert-manager/cert-manager.yaml"
+
+# Three offline docker images path thar cert manager need
 
 
 
