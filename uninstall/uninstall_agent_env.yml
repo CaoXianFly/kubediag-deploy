@@ -6,11 +6,23 @@
   - name: Removing kubediag executable file {{ kubediag_exec }}
     command: rm -rf {{ kubediag_exec }}/kubediag
 
+  # Ubuntu
   - name: Removing kubediag service file for systemd managing {{ kubediag_service }}
     command: rm -rf {{ kubediag_service }}/kubediag.service
+    when: ansible_distribution == "Ubuntu"
 
   - name: Removing kubediag parameters file for systemd managing {{ kubediag_para }}
     command: rm -rf {{ kubediag_para }}/kubediag
+    when: ansible_distribution == "Ubuntu"
+
+  # CentOS
+  - name: Removing kubediag service file for systemd managing /usr/lib/systemd/system/kubediag.service on CentOS
+    command: rm -rf /usr/lib/systemd/system/kubediag.service
+    when: ansible_distribution == "CentOS"
+
+  - name: Removing kubediag parameters file for systemd managing /etc/sysconfig/kubediag on CentOS
+    command: rm -rf /etc/sysconfig/kubediag
+    when: ansible_distribution == "CentOS"
 
   - name: Removing data root directory on agent nodes
     command: rm -rf {{ DataRoot }}

@@ -4,7 +4,7 @@ sh /usr/local/bin/k3s-uninstall.sh
 
 apt-get remove docker docker-engine docker.io containerd runc -y
 
-yum remove docker \
+yum remove -y docker \
                 docker-client \
                 docker-client-latest \
                 docker-common \

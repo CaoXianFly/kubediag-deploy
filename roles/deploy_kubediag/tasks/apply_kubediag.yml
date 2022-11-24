@@ -50,6 +50,11 @@
   command: kubectl apply -f {{ kubediag_deploy_dir }}
   ignore_errors: true
 
+# twice
+- name: Applying all config/deploy
+  command: kubectl apply -f {{ kubediag_deploy_dir }}
+  ignore_errors: true
+
   # Verifying all pods in kubediag namespace is running
 - name: Verifying all pod is running status at kubediag namespace
   command: kubectl get pod -n {{ kubediag_namespace }} -o json
