@@ -30,15 +30,33 @@
   become: yes
   command: cp -f {{ exec_in_service_agent }} {{ kubediag_exec }}
 
+## kubediag.service
+# Ubuntu
 - name: Copying kubediag.service file to {{ kubediag_service }}
   become: yes
   command: cp -f {{ service_in_kubediag_agent }} {{ kubediag_service }}
+  when: ansible_distribution == "Ubuntu"
 
+# CentOS
+- name: Copying kubediag.service file to {{ kubediag_service }}
+  become: yes
+  command: cp -f {{ service_in_kubediag_agent }} /usr/lib/systemd/system
+  when: ansible_distribution == "CentOS"
+
+## environmentfile
+# Ubuntu
 - name: Copying kubediag env file to {{ kubediag_para }}
   become: yes
   command: cp -f {{ para_service_in_kubediag_agent }} {{ kubediag_para }}
+  when: ansible_distribution == "Ubuntu"
 
-# Python3 main file template 
+# Centos
+- name: Copying kubediag env file to {{ kubediag_para }}
+  become: yes
+  command: cp -f {{ para_service_in_kubediag_agent }} /etc/sysconfig
+  when: ansible_distribution == "CentOS"
+
+## Python3 main file template 
 - name: Checking python3 main file template directory is exist
   stat: 
     path: "{{ Python3MainFilePath }}"

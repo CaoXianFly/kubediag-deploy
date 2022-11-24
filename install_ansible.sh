@@ -85,4 +85,3 @@ else
     exit -1
 fi
 
-# . $VENDIR/bin/activate
