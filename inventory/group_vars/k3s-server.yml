@@ -28,8 +28,6 @@ cert_manager_version: v1.0.4
 # Cert manager yaml file path
 cert_manager_file_path: "{{ kubediag_dir }}/cert-manager/cert-manager.yaml"
 
-# Three offline docker images path thar cert manager need
-
 
 
 

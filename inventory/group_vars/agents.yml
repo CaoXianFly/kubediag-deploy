@@ -5,9 +5,6 @@ kubediag_exec: /usr/local/bin
 # location of kubediag.service
 kubediag_service: /etc/systemd/system
 
-# location of parametes of kubediag.service
-kubediag_para: /etc/default
-
 ## 
 # Location of service
 service_dir_agent: "{{ kubediag_agent_dir }}/kubediag/service"

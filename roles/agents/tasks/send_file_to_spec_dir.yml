@@ -38,20 +38,20 @@
   when: ansible_distribution == "Ubuntu"
 
 # CentOS
-- name: Copying kubediag.service file to {{ kubediag_service }}
+- name: Copying kubediag.service file to /usr/lib/systemd/system
   become: yes
   command: cp -f {{ service_in_kubediag_agent }} /usr/lib/systemd/system
   when: ansible_distribution == "CentOS"
 
 ## environmentfile
 # Ubuntu
-- name: Copying kubediag env file to {{ kubediag_para }}
+- name: Copying kubediag env file to /etc/default
   become: yes
-  command: cp -f {{ para_service_in_kubediag_agent }} {{ kubediag_para }}
+  command: cp -f {{ para_service_in_kubediag_agent }} /etc/default
   when: ansible_distribution == "Ubuntu"
 
 # Centos
-- name: Copying kubediag env file to {{ kubediag_para }}
+- name: Copying kubediag env file to /etc/sysconfig
   become: yes
   command: cp -f {{ para_service_in_kubediag_agent }} /etc/sysconfig
   when: ansible_distribution == "CentOS"

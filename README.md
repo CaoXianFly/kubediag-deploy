@@ -29,7 +29,7 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub user@ip
 ### 部署过程如下
 
 ```shell
-# 1. 安装对应版本的Ansible
+# 1. 安装Ansible
 ./install_ansible.sh
 
 # 2. 激活虚拟环境

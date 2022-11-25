@@ -20,6 +20,7 @@
       become: yes
       command: apt-get remove docker docker-engine docker.io containerd runc -y 
     
+    # TODO: purge 
     - name: Allowing apt to use a repository over HTTPS
       become: yes
       command: apt-get install apt-transport-https ca-certificates curl gnupg lsb-release -y
