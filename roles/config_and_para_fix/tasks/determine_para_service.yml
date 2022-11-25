@@ -53,5 +53,21 @@
     regexp: '^python3MainFilePath='
     line: python3MainFilePath={{ Python3MainFilePath }}
 
+## Environment file path on agent node to write to kubediag para file
+# Ubuntu
+- name: Write Environment according different OS
+  lineinfile:
+    path: "{{ service_in_kubediag }}"
+    regexp: '^EnvironmentFile='
+    line: EnvironmentFile=/etc/default/kubediag
+  when: ansible_distribution == "Ubuntu"
+
+# CentOS
+- name: Write Environment according different OS
+  lineinfile:
+    path: "{{ service_in_kubediag }}"
+    regexp: '^EnvironmentFile='
+    line: EnvironmentFile=/etc/sysconfig/kubediag
+  when: ansible_distribution == "CentOS"
 
   

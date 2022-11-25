@@ -6,3 +6,7 @@
 - name: Execute `systemctl start kubediag` to start kubediag service
   become: yes
   command: systemctl start kubediag
+
+- name: Enable kubediag.service
+  become: yes
+  command: systemctl enable kubediag

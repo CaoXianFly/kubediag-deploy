@@ -11,8 +11,8 @@
     command: rm -rf {{ kubediag_service }}/kubediag.service
     when: ansible_distribution == "Ubuntu"
 
-  - name: Removing kubediag parameters file for systemd managing {{ kubediag_para }}
-    command: rm -rf {{ kubediag_para }}/kubediag
+  - name: Removing kubediag parameters file for systemd managing /etc/default/kubediag
+    command: rm -rf /etc/default/kubediag
     when: ansible_distribution == "Ubuntu"
 
   # CentOS
