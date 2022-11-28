@@ -1,37 +1,43 @@
 ---
 # Install k3s on control plane(k3s-server host)
-- name: Checking if k3s is installed on k3s-server host
-  command: k3s --version
-  register: k3s_if_installed
-  ignore_errors: true
+- name: Create directory to save images
+  become: yes
+  file:
+    path: /var/lib/rancher/k3s/agent/images
+    state: directory
+    mode: '0755'
 
-- name: Printing message 
-  debug: 
-      msg: "K3s has been installed, so it will not be installed again and all task of install K3s left will be skipped"
-  when: "k3s_if_installed.rc == 0"
+- name: Copying images tar to /var/lib/rancher/k3s/agent/images
+  become: yes
+  command: cp -f {{ k3s_images_file }} /var/lib/rancher/k3s/agent/images
 
-- name: Block of starting to install k3s if k3s was not installed and ensuring install success
-  block:
-    # Install at '/usr/local/bin' defaulted
-    - name: Installing K3s using script
-      # Mirror may be missing
-      shell: curl -sfL https://rancher-mirror.oss-cn-beijing.aliyuncs.com/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -
-      environment:
-        INSTALL_K3S_VERSION: "{{ K3s_server_version }}"
+- name: Copying k3s exec bin to /usr/local/bin
+  become: yes
+  command: cp -f {{ k3s_exec_bin }} /usr/local/bin
 
-    - name: Ensuring K3s is installed successfully
-      command: k3s --version
-      register: ret
-      ignore_errors: true
-    
-    - name: Printing install failed
-      fail: 
-        msg: "Installing K3s:{{ K3s_server_version }} failed using script!"
-      when: "ret.rc != 0"
+- name: Chmod +x for K3s exec binary
+  become: yes
+  file:
+    path: /usr/local/bin/k3s
+    mode: '0755'
 
-    - name: Printing install successed
-      debug:
-        msg: "K3s:{{ K3s_server_version }} is installed successfully!"
-      when: "ret.rc == 0"
-  when: "k3s_if_installed.rc != 0"
+- name: Chmod +x for installation script
+  become: yes
+  file: 
+    path: "{{ k3s_install_script }}"
+    mode: '0755'
 
+- name: Executing install.sh script to install K3s
+  become: yes
+  shell: INSTALL_K3S_SKIP_DOWNLOAD=true sh {{ k3s_install_script }}
+
+- name: Verifying K3s is installed successfully
+  stat: 
+    path: /etc/rancher/k3s/k3s.yaml
+  register: k3s_config_stat
+
+- name: Printing message that K3s is installed successfully
+  debug:
+    msg: "K3s is installed successfully on airgap environment"
+  when: k3s_config_stat.stat.exists
+  

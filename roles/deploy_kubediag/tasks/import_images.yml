@@ -1,0 +1,14 @@
+---
+# Import images from tar package
+- name: Import cert-manager-cainjector:v1.0.4 images
+  shell: ctr -n k8s.io images import {{ images_dir }}/cert-manager-cainjector-v104.tar
+
+- name: Import cert-manager-controller:v1.0.4 images
+  shell: ctr -n k8s.io images import {{ images_dir }}/cert-manager-controller-v104.tar
+
+- name: Import cert-manager-webhook:v1.0.4 images
+  shell: ctr -n k8s.io images import {{ images_dir }}/cert-manager-webhook-v104.tar
+
+- name: Import kubediag:v0.3.0 images
+  shell: ctr -n k8s.io images import {{ images_dir }}/kubediag-v030.tar
+

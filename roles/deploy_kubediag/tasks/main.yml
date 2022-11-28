@@ -1,4 +1,6 @@
 ---
+- include_tasks: import_images.yml
+
 - include_tasks: install_cert_manager.yml
 
 # if not use helm to install, the task should not be included

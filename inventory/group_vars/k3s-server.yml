@@ -28,7 +28,16 @@ cert_manager_version: v1.0.4
 # Cert manager yaml file path
 cert_manager_file_path: "{{ kubediag_dir }}/cert-manager/cert-manager.yaml"
 
+## K3s installation 
+# k3s exec location in kubediag
+k3s_exec_bin: "{{ kubediag_dir }}/k3s/k3s"
 
+# k3s images location in kubediag
+k3s_images_file: "{{ kubediag_dir }}/images/k3s-airgap-images-amd64.tar"
 
+# installation script location in kubediag
+k3s_install_script: "{{ kubediag_dir }}/install.sh"
 
+# images directory
+images_dir: "{{ kubediag_dir }}/images"
 

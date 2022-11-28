@@ -1,8 +1,0 @@
----
-- hosts: k3s-server
-  gather_facts: True
-  roles:
-  # roles/..
-    - { role: roles/deploy_k3s }
-    - { role: roles/deploy_kubediag }
-    - { role: roles/config_and_para_fix }
