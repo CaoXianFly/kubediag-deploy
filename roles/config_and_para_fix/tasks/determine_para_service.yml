@@ -70,4 +70,48 @@
     line: EnvironmentFile=/etc/sysconfig/kubediag
   when: ansible_distribution == "CentOS"
 
+## Master node parameters configure
+# master-Mode
+- name: Write startup parameters 'master-Mode' from all.yml that user define to kuebdiag file that used by systemd
+  lineinfile:
+    path: "{{ master_para_service_in_kubediag }}"
+    regexp: '^mode='
+    line: mode={{ master_Mode }}
+
+# master-Port
+- name: Write startup parameters 'master-Port' from all.yml that user define to kuebdiag file that used by systemd
+  lineinfile:
+    path: "{{ master_para_service_in_kubediag }}"
+    regexp: '^port='
+    line: port={{ master_Port }}
+
+# master-MetricsPort
+- name: Write startup parameters 'master-MetricsPort' from all.yml that user define to kuebdiag file that used by systemd
+  lineinfile:
+    path: "{{ master_para_service_in_kubediag }}"
+    regexp: '^metricsPort='
+    line: metricsPort={{ master_MetricsPort }}
+
+# master-EnableLeaderElection
+- name: Write startup parameters 'master-EnableLeaderElection' from all.yml that user define to kuebdiag file that used by systemd
+  lineinfile:
+    path: "{{ master_para_service_in_kubediag }}"
+    regexp: '^enableLeaderElection='
+    line: enableLeaderElection={{ master_EnableLeaderElection }}
   
+## Environment file path on agent node to write to kubediag para file
+# Ubuntu
+- name: Write Environment according different OS
+  lineinfile:
+    path: "{{ master_service_in_kubediag }}"
+    regexp: '^EnvironmentFile='
+    line: EnvironmentFile=/etc/default/kubediag-master
+  when: ansible_distribution == "Ubuntu"
+
+# CentOS
+- name: Write Environment according different OS
+  lineinfile:
+    path: "{{ master_service_in_kubediag }}"
+    regexp: '^EnvironmentFile='
+    line: EnvironmentFile=/etc/sysconfig/kubediag-master
+  when: ansible_distribution == "CentOS"

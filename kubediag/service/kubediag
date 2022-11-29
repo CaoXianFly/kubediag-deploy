@@ -1,6 +1,6 @@
 mode=agent
 port=8090
-metricsPort=10357
+metricsPort=10355
 nodeName=node
 dataRoot=/var/lib/kubediag
 python3MainFilePath=/var/lib/kubediag/function-main

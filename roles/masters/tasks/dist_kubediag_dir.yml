@@ -1,12 +1,12 @@
 ---
 # Delete existing kubediag directory
-- name: Deleteing old kubediag project on all agent nodes at {{ kubediag_agent_dir }}
+- name: Deleteing old kubediag project on master nodes at {{ kubediag_agent_dir }}
   file:
     path: "{{ kubediag_agent_dir }}"
     state: absent
 
 # Using copy module is simple but is too slow, so use synchronize module instead here
-- name: Distributing kubediag directory to all agent nodes
+- name: Distributing kubediag directory to master nodes
   ansible.posix.synchronize:
     src: "{{ kubediag_dir }}"
     dest: "{{ kubediag_agent_dir }}"

@@ -1,0 +1,14 @@
+# The dir is the same as k3s-server.yml to locate kubediag driectory
+kubediag_dir: "{{lookup('ansible.builtin.env', 'PWD')}}/kubediag"
+
+# kubediag binary file
+exec_in_service_agent: "{{ kubediag_agent_dir }}/kubediag/kubediag"
+
+# Location to save systemd service file of kubediag master
+master_service_in_kubediag_agent: "{{ kubediag_agent_dir }}/kubediag/service/kubediag-master.service"
+
+# Location to save kubediag-master service parameters
+master_para_service_in_kubediag_agent: "{{ kubediag_agent_dir }}/kubediag/service/kubediag-master"
+
+# Location for serving-certs
+serving_certs_in_kubediag_agent: "{{ kubediag_agent_dir }}/kubediag/serving-certs"

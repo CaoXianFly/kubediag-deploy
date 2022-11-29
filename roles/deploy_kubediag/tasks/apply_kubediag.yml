@@ -7,9 +7,9 @@
   register: node_info
 
 # for debug 
-- name: debuggg
-  debug:
-    msg: "{{node_info.stdout|from_json|json_query('spec.taints')}}"
+# - name: debug
+#   debug:
+#     msg: "{{node_info.stdout|from_json|json_query('spec.taints')}}"
 
 - name: Add a taint to current k3s node
   command: kubectl taint nodes {{ ansible_hostname }} key1=value1:NoSchedule
@@ -55,17 +55,17 @@
   command: kubectl apply -f {{ kubediag_deploy_dir }}
   ignore_errors: true
 
-  # Verifying all pods in kubediag namespace is running
-- name: Verifying all pod is running status at kubediag namespace
-  command: kubectl get pod -n {{ kubediag_namespace }} -o json
-  register: all_pod_info_of_kubediag
-  retries: 60
-  delay: 5
-  until: all_pod_info_of_kubediag.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+# Verifying all pods in kubediag namespace is running
+# - name: Verifying all pod is running status at kubediag namespace
+#   command: kubectl get pod -n {{ kubediag_namespace }} -o json
+#   register: all_pod_info_of_kubediag
+#   retries: 60
+#   delay: 5
+#   until: all_pod_info_of_kubediag.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
 
-- name: Waiting all pods of kubediag namespace arrive reach to running status
-  debug: 
-    msg: "All pods of kubediag namespace are running"
+# - name: Waiting all pods of kubediag namespace arrive reach to running status
+#   debug: 
+#     msg: "All pods of kubediag namespace are running"
 
 # TODO: temporarily ignore
 # Exist but not in Active status

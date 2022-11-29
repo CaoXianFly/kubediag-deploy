@@ -7,6 +7,12 @@
     - { role: roles/deploy_kubediag }
     - { role: roles/config_and_para_fix }
 
+- hosts: masters
+  gather_facts: True
+  roles:
+    - { role: roles/masters }
+    - { role: roles/start_service}
+
 - hosts: agents
   gather_facts: True
   roles:

@@ -1,0 +1,62 @@
+---
+## Send kubediag exec、kubediag.service and kubediag env file to specified directory
+
+# kubediag executable file
+- name: Chmod +x for kubediag exec
+  file: 
+    path: "{{ exec_in_service_agent }}"
+    mode: '0755'
+
+# kubediag parameters file for systemd
+- name: Chmod +r for kubediag.service on master node
+  file: 
+    path: "{{ master_service_in_kubediag_agent }}"
+    mode: '0644'
+
+# kubediag service file for systemd
+- name: Chmod +r for kubediag service parameters on master node
+  file: 
+    path: "{{ master_para_service_in_kubediag_agent }}"
+    mode: '0644'
+
+# Distribute file to specific directory from all.yml on agent nodes
+- name: Copying kubediag exec file to /usr/local/bin
+  become: yes
+  command: cp -f {{ exec_in_service_agent }} /usr/local/bin
+
+## kubediag.service on agent node
+# Ubuntu
+- name: Copying kubediag.service file to /etc/systemd/system on Ubuntu os
+  become: yes
+  command: cp -f {{ master_service_in_kubediag_agent }} /etc/systemd/system
+  when: ansible_distribution == "Ubuntu"
+
+# CentOS
+- name: Copying kubediag.service file to /usr/lib/systemd/system on Centos os
+  become: yes
+  command: cp -f {{ master_service_in_kubediag_agent }} /usr/lib/systemd/system
+  when: ansible_distribution == "CentOS"
+
+## environmentfile
+# Ubuntu
+- name: Copying kubediag env file to /etc/default on Ubuntu os
+  become: yes
+  command: cp -f {{ master_para_service_in_kubediag_agent }} /etc/default
+  when: ansible_distribution == "Ubuntu"
+
+# Centos
+- name: Copying kubediag env file to /etc/sysconfig on Centos os
+  become: yes
+  command: cp -f {{ master_para_service_in_kubediag_agent }} /etc/sysconfig
+  when: ansible_distribution == "CentOS"
+
+- name: Creating /etc/kubediag directory to save certs if not exist
+  file:
+    path: /etc/kubediag
+    state: directory
+    mode: '0755'
+
+# serving-certs to /etc/kubediag
+- name: Copying Serving-certs to /etc/kubediag
+  become: yes
+  command: cp -rf {{ serving_certs_in_kubediag_agent }} /etc/kubediag

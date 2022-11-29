@@ -1,14 +1,4 @@
 ## Parameters about kubediag.service by systemd manager
-# location of kubediag exec file 
-kubediag_exec: /usr/local/bin
-
-# location of kubediag.service
-kubediag_service: /etc/systemd/system
-
-## 
-# Location of service
-service_dir_agent: "{{ kubediag_agent_dir }}/kubediag/service"
-
 # Location of kubediag exec file
 exec_in_service_agent: "{{ kubediag_agent_dir }}/kubediag/kubediag"
 
@@ -18,4 +8,5 @@ service_in_kubediag_agent: "{{ kubediag_agent_dir }}/kubediag/service/kubediag.s
 # File that save kubediag.service parameters
 para_service_in_kubediag_agent: "{{ kubediag_agent_dir }}/kubediag/service/kubediag"
 
+# Python3 main template file
 python3_in_kubediag_agent: "{{ kubediag_agent_dir }}/kubediag/python3/python3"

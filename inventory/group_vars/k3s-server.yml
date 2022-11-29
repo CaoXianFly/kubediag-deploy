@@ -18,8 +18,14 @@ exec_in_service: "{{ kubediag_dir }}/kubediag"
 # Location to save systemd service file of kubediag(must inside kubediag directory)
 service_in_kubediag: "{{ kubediag_dir }}/service/kubediag.service"
 
-# File that save kubediag.service parameters
+# File that save kubediag service parameters
 para_service_in_kubediag: "{{ kubediag_dir }}/service/kubediag"
+
+# Location to save systemd service file of kubediag master(must inside kubediag directory)
+master_service_in_kubediag: "{{ kubediag_dir }}/service/kubediag-master.service"
+
+# Location to save kubediag-master service parameters
+master_para_service_in_kubediag: "{{ kubediag_dir }}/service/kubediag-master"
 
 ## Cert Manager installation
 # Cert Manager version

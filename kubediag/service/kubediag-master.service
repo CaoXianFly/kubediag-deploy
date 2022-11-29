@@ -1,15 +1,15 @@
 [Unit]
-Description=KubeDiag Application For Agent Mode
+Description=KubeDiag Application For Master Mode
 Documentation=https://github.com/kubediag/kubediag
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-EnvironmentFile=/etc/default/kubediag
+EnvironmentFile=/etc/default/kubediag-master
 
 Type=simple
 
-ExecStart=/usr/local/bin/kubediag --mode=${mode} --port=${port} --metrics-port=${metricsPort} --node-name=${nodeName} --data-root=${dataRoot} --python3-main-file=${python3MainFilePath}/python3
+ExecStart=/usr/local/bin/kubediag --mode=${mode} --port=${port} --metrics-port=${metricsPort} --enable-leader-election=${enableLeaderElection}
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStop=/bin/kill -15 $MAINPID
 

@@ -1,33 +1,84 @@
 ---
-- name: Uninstall agent nodes deployd environment
+- name: Uninstall master nodes deployd environment
   hosts: agents
   gather_facts: True
   tasks:
-  - name: Removing kubediag executable file {{ kubediag_exec }}
-    command: rm -rf {{ kubediag_exec }}/kubediag
+  - name: Removing kubediag executable file /usr/local/bin/kubediag
+    become: yes
+    command: rm -rf /usr/local/bin/kubediag
 
   # Ubuntu
-  - name: Removing kubediag service file for systemd managing {{ kubediag_service }}
-    command: rm -rf {{ kubediag_service }}/kubediag.service
+  - name: Removing kubediag service file for systemd managing /etc/systemd/system
+    become: yes
+    command: rm -rf /etc/systemd/system/kubediag.service
     when: ansible_distribution == "Ubuntu"
 
   - name: Removing kubediag parameters file for systemd managing /etc/default/kubediag
+    become: yes
     command: rm -rf /etc/default/kubediag
     when: ansible_distribution == "Ubuntu"
 
   # CentOS
   - name: Removing kubediag service file for systemd managing /usr/lib/systemd/system/kubediag.service on CentOS
+    become: yes
     command: rm -rf /usr/lib/systemd/system/kubediag.service
     when: ansible_distribution == "CentOS"
 
   - name: Removing kubediag parameters file for systemd managing /etc/sysconfig/kubediag on CentOS
+    become: yes
     command: rm -rf /etc/sysconfig/kubediag
-    when: ansible_distribution == "CentOS"
+    when: ansible_distribution == "CentOS" 
 
   - name: Removing data root directory on agent nodes
+    become: yes
     command: rm -rf {{ DataRoot }}
+
   - name: Removing kubediag directory on agent nodes on {{kubediag_agent_dir}}
+    become: yes
     command: rm -rf {{ kubediag_agent_dir }}
   
   - name: Removing config file and refering .kubediag directory on agent nodes
+    become: yes
     command: rm -rf ~/.kube
+
+- name: Uninstall master nodes deployd environment
+  hosts: masters
+  gather_facts: True
+  tasks:
+  - name: Removing kubediag executable file /usr/local/bin/kubediag
+    become: yes
+    command: rm -rf /usr/local/bin/kubediag
+
+  # Ubuntu
+  - name: Removing kubediag-master service file for systemd managing /etc/systemd/system on Ubuntu os
+    become: yes
+    command: rm -rf /etc/systemd/system/kubediag-master.service
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Removing kubediag parameters file for systemd managing /etc/default/kubediag-master on Ubuntu os
+    become: yes
+    command: rm -rf /etc/default/kubediag-master
+    when: ansible_distribution == "Ubuntu"
+
+  # CentOS
+  - name: Removing kubediag-master service file for systemd managing /usr/lib/systemd/system/kubediag-master.service on CentOS
+    become: yes
+    command: rm -rf /usr/lib/systemd/system/kubediag-master.service
+    when: ansible_distribution == "CentOS"
+
+  - name: Removing kubediag parameters file for systemd managing /etc/sysconfig/kubediag-master on CentOS
+    become: yes
+    command: rm -rf /etc/sysconfig/kubediag-master
+    when: ansible_distribution == "CentOS"
+
+  - name: Removeing serving-certs directory on master node
+    become: yes
+    command: rm -rf /etc/kubediag
+
+  - name: Removing config file and refering .kubediag directory on agent nodes
+    become: yes
+    command: rm -rf ~/.kube
+    
+  - name: Removing kubediag directory on agent nodes on {{kubediag_agent_dir}}
+    become: yes
+    command: rm -rf {{ kubediag_agent_dir }}

@@ -1,0 +1,4 @@
+mode=master
+port=8089
+enableLeaderElection=False
+metricsPort=10357

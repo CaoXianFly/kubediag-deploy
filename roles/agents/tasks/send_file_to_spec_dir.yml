@@ -26,15 +26,15 @@
     mode: '0644'
 
 # Distribute file to specific directory from all.yml on agent nodes
-- name: Copying kubediag exec file to {{ kubediag_exec }}
+- name: Copying kubediag exec file to /usr/local/bin
   become: yes
-  command: cp -f {{ exec_in_service_agent }} {{ kubediag_exec }}
+  command: cp -f {{ exec_in_service_agent }} /usr/local/bin
 
-## kubediag.service
+## kubediag.service on agent node
 # Ubuntu
-- name: Copying kubediag.service file to {{ kubediag_service }}
+- name: Copying kubediag.service file to /etc/systemd/system
   become: yes
-  command: cp -f {{ service_in_kubediag_agent }} {{ kubediag_service }}
+  command: cp -f {{ service_in_kubediag_agent }} /etc/systemd/system
   when: ansible_distribution == "Ubuntu"
 
 # CentOS
@@ -55,9 +55,8 @@
   become: yes
   command: cp -f {{ para_service_in_kubediag_agent }} /etc/sysconfig
   when: ansible_distribution == "CentOS"
-
-## Python3 main file template 
-- name: Checking python3 main file template directory is exist
+## Python3 main file template only on agent node
+- name: Checking python3 main template directory is exist
   stat: 
     path: "{{ Python3MainFilePath }}"
   register: python3_stat

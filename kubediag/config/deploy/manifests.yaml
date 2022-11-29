@@ -1327,8 +1327,8 @@ spec:
         runAsUser: 0
       serviceAccountName: kubediag
       terminationGracePeriodSeconds: 10
-      tolerations:
-      - operator: Exists
+      # tolerations:
+      # - operator: Exists
       volumes:
       - name: cert
         secret:
