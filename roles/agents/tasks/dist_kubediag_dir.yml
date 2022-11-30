@@ -19,7 +19,7 @@
     mode: '0755'
 
 - name: Copying config file from {{ kubediag_agent_dir }} to .kube
-  command: cp -pf {{ kubediag_agent_dir }}/kubediag/k3s/config ~/.kube
+  command: cp -f {{ kubediag_agent_dir }}/kubediag/k3s/config ~/.kube
 
 # - name: Getting KUBECONFIG environment variable
 #   shell: echo $KUBECONFIG

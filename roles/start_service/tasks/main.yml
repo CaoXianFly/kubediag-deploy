@@ -10,7 +10,7 @@
 
 - name: Checking file kubediag.service on CentOS
   stat: 
-    path: /usr/lib/systemd/system/kubediag
+    path: /usr/lib/systemd/system/kubediag.service
   register: centos_kubediag_service
 
 - name: Execute `systemctl start kubediag` to start kubediag service
@@ -31,7 +31,7 @@
 
 - name: Checking file kubediag-master.service on CentOS
   stat: 
-    path: /usr/lib/systemd/system/kubediag-master
+    path: /usr/lib/systemd/system/kubediag-master.services
   register: centos_kubediag_master_service
 
 - name: Start kubediag-master service
