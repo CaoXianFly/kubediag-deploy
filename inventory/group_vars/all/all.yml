@@ -3,11 +3,11 @@
 # kubediag location on agent nodes
 kubediag_agent_dir: ~/kubediag
 
-## Parameters about KubeDiag master node
-# KubeDiag is running as a master
+## Parameters about kubediag master service settings
+# kubediag is running as a master
 master_Mode: master
 
-# KubeDiag server on 8090 port
+# kubediag server on 8090 port
 master_Port: 8089
 
 # The port the metric endpoint to serve on
@@ -16,11 +16,11 @@ master_MetricsPort: 10357
 # master node enable-leader-election
 master_EnableLeaderElection: false
 
-## Parameters about KubeDiag startup settings
-# KubeDiag is running as an agent
+## Parameters about kubediag agent serivce settings
+# kubediag is running as an agent
 Mode: agent
 
-# KubeDiag server on 8090 port
+# kubediag server on 8090 port
 Port: 8090
 
 # NodeName 
