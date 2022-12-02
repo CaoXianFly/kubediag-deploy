@@ -1,4 +1,4 @@
 mode=master
 port=8089
-enableLeaderElection=False
+enableLeaderElection=True
 metricsPort=10357

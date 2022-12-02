@@ -13,7 +13,7 @@ master_Port: 8089
 # The port the metric endpoint to serve on
 master_MetricsPort: 10357
 
-# master node enable-leader-election
+# FIXME:master node enable-leader-election
 master_EnableLeaderElection: false
 
 ## Parameters about kubediag agent serivce settings

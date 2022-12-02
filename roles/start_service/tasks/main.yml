@@ -13,6 +13,11 @@
     path: /usr/lib/systemd/system/kubediag.service
   register: centos_kubediag_service
 
+- name: systemctl stop kubediag firstly if not first install
+  become: yes
+  command: systemctl stop kubediag
+  when: ubuntu_kubediag_service.stat.exists or centos_kubediag_service.stat.exists
+
 - name: Execute `systemctl start kubediag` to start kubediag service
   become: yes
   command: systemctl start kubediag
@@ -31,15 +36,20 @@
 
 - name: Checking file kubediag-master.service on CentOS
   stat: 
-    path: /usr/lib/systemd/system/kubediag-master.services
+    path: /usr/lib/systemd/system/kubediag-master.service
   register: centos_kubediag_master_service
+
+- name: systemctl stop kubediag firstly if not first install
+  become: yes
+  command: systemctl stop kubediag-master
+  when: ubuntu_kubediag_master_service.stat.exists or centos_kubediag_master_service.stat.exists
 
 - name: Start kubediag-master service
   become: yes
   command: systemctl start kubediag-master
   when: ubuntu_kubediag_master_service.stat.exists or centos_kubediag_master_service.stat.exists
 
-- name: Enable kubediag-master.service
+- name: Enable kubediag-master service
   become: yes
   command: systemctl enable kubediag-master
   when: ubuntu_kubediag_master_service.stat.exists or centos_kubediag_master_service.stat.exists
