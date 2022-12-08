@@ -6,11 +6,6 @@
   command: kubectl get node {{ ansible_hostname }} -o json 
   register: node_info
 
-# for debug 
-# - name: debug
-#   debug:
-#     msg: "{{node_info.stdout|from_json|json_query('spec.taints')}}"
-
 - name: Add a taint to current k3s node
   command: kubectl taint nodes {{ ansible_hostname }} key1=value1:NoSchedule
   when: not node_info.stdout|from_json|json_query('spec.taints')
@@ -47,30 +42,10 @@
 # Sometimes errors occur because of pulling images timeout
 # Temporary solution: Retry task 60 times with interval 5s(60*5s = 5min) util all pod is running status
 - name: Applying all config/deploy
-  command: kubectl apply -f {{ kubediag_deploy_dir }}
+  shell: kubectl apply -f {{ kubediag_deploy_dir }} > /dev/null 2>&1
   ignore_errors: true
 
 # twice
 - name: Applying all config/deploy
-  command: kubectl apply -f {{ kubediag_deploy_dir }}
+  shell: kubectl apply -f {{ kubediag_deploy_dir }} > /dev/null 2>&1
   ignore_errors: true
-
-# Verifying all pods in kubediag namespace is running
-# - name: Verifying all pod is running status at kubediag namespace
-#   command: kubectl get pod -n {{ kubediag_namespace }} -o json
-#   register: all_pod_info_of_kubediag
-#   retries: 60
-#   delay: 5
-#   until: all_pod_info_of_kubediag.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
-
-# - name: Waiting all pods of kubediag namespace arrive reach to running status
-#   debug: 
-#     msg: "All pods of kubediag namespace are running"
-
-# TODO: temporarily ignore
-# Exist but not in Active status
-# - name: KubeDiag namespace is exist but phase is not Active
-#   blcok:
-#     - name:
-#   when: ns_info.stdout|from_json|json_query('items[?metadata.name == `kubediag`].status.phase') != [] and ns_info.stdout|from_json|json_query('items[?metadata.name == `kubediag`].status.phase') != ["Active"]
-

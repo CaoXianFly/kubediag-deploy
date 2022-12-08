@@ -1,0 +1,25 @@
+---
+# Checking file whether is exists under kubediag/images directory
+- name: Checking images directory is exist
+  file:
+    path: "{{images_dir}}"
+    state: directory
+    mode: '0755'
+
+- name: Checking file k3s-airgap-images-amd64.tar is exist
+  stat:
+    path: "{{images_dir}}/k3s-airgap-images-amd64.tar"
+  register: k3s_airgap_images_stat
+
+- name: Downloading file k3s-airgap-images-amd64.tar if it is not exist
+  command: wget https://kubediag-install.nos-eastchina1.126.net/images/k3s-airgap-images-amd64.tar -P {{images_dir}}
+  when: not k3s_airgap_images_stat.stat.exists
+
+- name: Checking file {{kubediag_image_file}} is exist
+  stat:
+    path: "{{kubediag_image_file}}"
+  register: kubediag_image_stat
+
+- name: Downloading file {{kubediag_image_file}} if it is not exist
+  command: wget https://kubediag-install.nos-eastchina1.126.net/images/kubediag-58ddaeb.tar -P {{images_dir}}
+  when: not kubediag_image_stat.stat.exists

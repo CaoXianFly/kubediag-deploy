@@ -1,6 +1,7 @@
 ---
 ## Not use docker but containerd that k3s use default
-# - include_tasks: install_docker.yml
+
+- include_tasks: download_images.yml
 
 - include_tasks: install_k3s.yml
 

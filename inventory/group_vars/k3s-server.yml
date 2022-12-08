@@ -38,12 +38,15 @@ cert_manager_file_path: "{{ kubediag_dir }}/cert-manager/cert-manager.yaml"
 # k3s exec location in kubediag
 k3s_exec_bin: "{{ kubediag_dir }}/k3s/k3s"
 
-# k3s images location in kubediag
-k3s_images_file: "{{ kubediag_dir }}/images/k3s-airgap-images-amd64.tar"
-
 # installation script location in kubediag
 k3s_install_script: "{{ kubediag_dir }}/install.sh"
 
 # images directory
-images_dir: "{{ kubediag_dir }}/images"
+images_dir: "{{ lookup('ansible.builtin.env', 'PWD') }}/images"
+
+# k3s images location in kubediag
+k3s_images_file: "{{ images_dir }}/k3s-airgap-images-amd64.tar"
+
+# kubediag image location in kubediag
+kubediag_image_file: "{{ images_dir }}/kubediag-58ddaeb.tar"
 
